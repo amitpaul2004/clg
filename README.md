@@ -12,7 +12,7 @@
                ║                                                                   ║
                ║     🧠 Machine Learning & 📚 Natural Language Processing         ║
                ║                    Comprehensive Learning Hub                     ║
-       ║                                                                   ║
+               ║                                                                   ║
 ║              Explore, Learn, and Build Intelligent Systems        ║
 ║                                                                   ║
 ╚═══════════════════════════════════════════════════════════════════╝
