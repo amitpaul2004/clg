@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS_RUNNER // Profile &amp; Settings — CyberMarket</title>
+  <meta name="description" content="User profile and settings panel for CyberMarket — the underground e-commerce marketplace of the sprawl.">
+
+  <!-- Tailwind CSS v4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <!-- Design System CSS -->
+  <style type="text/tailwindcss">
+    @import url('./css/theme.css');
+  </style>
+  <link rel="stylesheet" href="./css/theme.css">
+  <link rel="stylesheet" href="./css/cyberpunk.css">
+  <link rel="stylesheet" href="./css/components.css">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="cyber-scanlines cyber-grid cyber-gradient-mesh">
+
+  <!-- ═══════════ MOBILE HEADER ═══════════ -->
+  <header class="cyber-mobile-header">
+    <button id="hamburger" class="cyber-hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <span class="cyber-mobile-title">CyberMarket</span>
+  </header>
+
+  <!-- ═══════════ SIDEBAR OVERLAY ═══════════ -->
+  <div id="sidebar-overlay" class="cyber-sidebar-overlay"></div>
+
+  <!-- ═══════════ SIDEBAR NAVIGATION ═══════════ -->
+  <aside id="sidebar" class="cyber-sidebar">
+    <div class="cyber-sidebar-logo">
+      <i data-lucide="zap" style="width:20px;height:20px;"></i>
+      CyberMarket
+    </div>
+
+    <nav class="cyber-sidebar-nav">
+      <div class="cyber-sidebar-section">Main</div>
+      <a href="#" class="cyber-sidebar-item" data-page="dashboard">
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Dashboard
+      </a>
+      <a href="#" class="cyber-sidebar-item" data-page="products">
+        <i data-lucide="package" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Products
+      </a>
+      <a href="#" class="cyber-sidebar-item" data-page="orders">
+        <i data-lucide="shopping-cart" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Orders
+      </a>
+      <a href="#" class="cyber-sidebar-item" data-page="wishlist">
+        <i data-lucide="heart" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Wishlist
+      </a>
+
+      <div class="cyber-sidebar-section" style="margin-top:0.5rem;">Account</div>
+      <a href="#" class="cyber-sidebar-item cyber-sidebar-item--active" data-page="settings">
+        <i data-lucide="settings" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Settings
+      </a>
+    </nav>
+
+    <div class="cyber-sidebar-footer">
+      <a href="#" class="cyber-sidebar-item" style="padding-left:0; color: var(--color-destructive);">
+        <i data-lucide="log-out" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Disconnect
+      </a>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="lg:ml-[260px] min-h-screen pt-[56px] lg:pt-0">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+
+      <!-- ─── PAGE HEADER ─── -->
+      <div class="flex items-center gap-3 mb-2">
+        <span style="font-family: var(--font-label); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted-foreground);">
+          <span style="color: var(--color-accent);">&gt;</span> sys.user.settings
+        </span>
+        <span class="cyber-badge">Active</span>
+      </div>
+      <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wider mb-8" style="font-family: var(--font-heading); color: var(--color-foreground);">
+        Profile <span style="color: var(--color-accent);">&amp;</span> Settings
+      </h1>
+
+      <!-- ═══════════ PROFILE HERO CARD ═══════════ -->
+      <div class="cyber-card cyber-card--holographic cyber-corner-accents mb-8 p-6 sm:p-8">
+        <div class="cyber-corner-accents-inner">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+
+            <!-- Avatar -->
+            <div class="relative flex-shrink-0">
+              <div class="cyber-avatar cyber-avatar--lg">
+                <img src="./assets/avatar.png" alt="User avatar" width="96" height="96">
+              </div>
+              <button class="cyber-btn cyber-btn--sm cyber-btn--ghost absolute -bottom-2 -right-2" title="Change avatar" style="padding:0.25rem; min-height:28px; width:28px; font-size:0.75rem;">
+                <i data-lucide="camera" style="width:14px;height:14px;stroke-width:1.5;"></i>
+              </button>
+            </div>
+
+            <!-- User Info -->
+            <div class="flex-1 min-w-0">
+              <h2 class="text-xl sm:text-2xl font-bold tracking-wider cyber-glitch" data-text="NEXUS_RUNNER" style="font-family: var(--font-heading); color: var(--color-foreground);">
+                NEXUS_RUNNER
+              </h2>
+              <p style="font-family: var(--font-label); font-size: 0.8125rem; color: var(--color-accent); letter-spacing: 0.1em; margin-top: 0.25rem;">
+                @nexus_runner_77
+              </p>
+              <p style="font-family: var(--font-body); font-size: 0.8125rem; color: var(--color-muted-foreground); margin-top: 0.5rem; max-width: 28rem;">
+                Rogue netrunner. Data liberation specialist. The sprawl is my playground.<span class="cyber-cursor" style="font-size: 0.75rem;"></span>
+              </p>
+            </div>
+
+            <!-- Member since badge -->
+            <div class="hidden sm:flex flex-col items-end gap-2 flex-shrink-0">
+              <span class="cyber-badge cyber-badge--tertiary">
+                <i data-lucide="shield-check" style="width:10px;height:10px;margin-right:4px;stroke-width:1.5;"></i>
+                Verified
+              </span>
+              <span style="font-family: var(--font-label); font-size: 0.5625rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-muted-foreground);">
+                Member since 2024.03
+              </span>
+            </div>
+          </div>
+
+          <!-- Stats Row -->
+          <div class="cyber-divider"></div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-0">
+            <div class="cyber-stat" style="border-right: 1px solid var(--color-border);">
+              <span class="cyber-stat-value" data-count="47">0</span>
+              <span class="cyber-stat-label">Orders</span>
+            </div>
+            <div class="cyber-stat sm:border-r" style="border-right: 1px solid var(--color-border);">
+              <span class="cyber-stat-value" data-count="128">0</span>
+              <span class="cyber-stat-label">Wishlist</span>
+            </div>
+            <div class="cyber-stat" style="border-right: 1px solid var(--color-border); border-top: 1px solid var(--color-border);" class="sm:border-t-0">
+              <span class="cyber-stat-value" data-count="23">0</span>
+              <span class="cyber-stat-label">Reviews</span>
+            </div>
+            <div class="cyber-stat" style="border-top: 1px solid var(--color-border);">
+              <span class="cyber-stat-value" data-count="12750" data-prefix="Ȼ">0</span>
+              <span class="cyber-stat-label">Credits</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ TABS ═══════════ -->
+      <div class="cyber-tabs mb-6" role="tablist">
+        <button class="cyber-tab cyber-tab--active" data-tab="tab-profile" role="tab" aria-selected="true">
+          <i data-lucide="user" style="width:14px;height:14px;stroke-width:1.5;"></i>
+          Profile
+        </button>
+        <button class="cyber-tab" data-tab="tab-security" role="tab" aria-selected="false">
+          <i data-lucide="shield" style="width:14px;height:14px;stroke-width:1.5;"></i>
+          Security
+        </button>
+        <button class="cyber-tab" data-tab="tab-notifications" role="tab" aria-selected="false">
+          <i data-lucide="bell" style="width:14px;height:14px;stroke-width:1.5;"></i>
+          Notifications
+        </button>
+        <button class="cyber-tab" data-tab="tab-billing" role="tab" aria-selected="false">
+          <i data-lucide="credit-card" style="width:14px;height:14px;stroke-width:1.5;"></i>
+          Billing
+        </button>
+      </div>
+
+      <!-- ═══════════ TAB PANELS ═══════════ -->
+
+      <!-- ── TAB: PROFILE ─────────────────────────── -->
+      <div id="tab-profile" class="cyber-tab-panel cyber-tab-panel--active" role="tabpanel">
+        <div class="cyber-card p-6 sm:p-8 mb-6">
+          <h3 class="text-base font-semibold tracking-wider mb-6" style="font-family: var(--font-heading); color: var(--color-foreground);">
+            <span style="color: var(--color-accent);">//</span> Personal Information
+          </h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <!-- Display Name -->
+            <div class="form-group">
+              <label class="cyber-label" for="display-name">Display Name</label>
+              <div class="cyber-input-wrapper">
+                <span class="cyber-input-prefix">&gt;</span>
+                <input type="text" id="display-name" class="cyber-input" value="NEXUS_RUNNER" placeholder="Enter handle...">
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+              <label class="cyber-label" for="email">Email Address</label>
+              <div class="cyber-input-wrapper">
+                <span class="cyber-input-prefix">&gt;</span>
+                <input type="email" id="email" class="cyber-input" value="nexus@darknet.io" placeholder="Enter email...">
+              </div>
+            </div>
+
+            <!-- Location -->
+            <div class="form-group">
+              <label class="cyber-label" for="location">Location</label>
+              <div class="cyber-input-wrapper">
+                <span class="cyber-input-prefix">&gt;</span>
+                <input type="text" id="location" class="cyber-input" value="Neo-Tokyo, Sector 7G" placeholder="Enter location...">
+              </div>
+            </div>
+
+            <!-- Website -->
+            <div class="form-group">
+              <label class="cyber-label" for="website">Website</label>
+              <div class="cyber-input-wrapper">
+                <span class="cyber-input-prefix">&gt;</span>
+                <input type="url" id="website" class="cyber-input" value="https://nexus-runner.darknet.io" placeholder="Enter url...">
+              </div>
+            </div>
+
+            <!-- Bio (full width) -->
+            <div class="form-group sm:col-span-2">
+              <label class="cyber-label" for="bio">Bio</label>
+              <div class="cyber-input-wrapper" style="align-items: flex-start;">
+                <span class="cyber-input-prefix" style="top: 0.75rem;">&gt;</span>
+                <textarea id="bio" class="cyber-textarea" rows="3" placeholder="Tell the sprawl about yourself...">Rogue netrunner. Data liberation specialist. The sprawl is my playground.</textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="cyber-divider"></div>
+
+          <!-- Linked Accounts -->
+          <h3 class="text-base font-semibold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+            <span style="color: var(--color-accent);">//</span> Linked Accounts
+          </h3>
+          <div class="flex flex-wrap gap-3">
+            <div class="flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] bg-[var(--color-muted)]" style="clip-path: polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px));">
+              <i data-lucide="github" style="width:16px;height:16px;stroke-width:1.5;color:var(--color-foreground);"></i>
+              <span style="font-family: var(--font-label); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;">nexus_runner</span>
+              <span class="cyber-badge" style="margin-left:0.5rem;">Connected</span>
+            </div>
+            <div class="flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] bg-[var(--color-muted)]" style="clip-path: polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px));">
+              <i data-lucide="twitter" style="width:16px;height:16px;stroke-width:1.5;color:var(--color-accent-tertiary);"></i>
+              <span style="font-family: var(--font-label); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;">@nexus_77</span>
+              <span class="cyber-badge cyber-badge--tertiary" style="margin-left:0.5rem;">Connected</span>
+            </div>
+            <button class="cyber-btn cyber-btn--outline cyber-btn--sm">
+              <i data-lucide="plus" style="width:14px;height:14px;stroke-width:1.5;"></i>
+              Link Account
+            </button>
+          </div>
+
+          <div class="flex justify-end mt-8">
+            <button class="cyber-btn cyber-btn--glitch" data-action="save">
+              <i data-lucide="save" style="width:14px;height:14px;stroke-width:1.5;"></i>
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: SECURITY ────────────────────────── -->
+      <div id="tab-security" class="cyber-tab-panel" role="tabpanel">
+
+        <!-- Password Change -->
+        <div class="cyber-card p-6 sm:p-8 mb-6">
+          <h3 class="text-base font-semibold tracking-wider mb-6" style="font-family: var(--font-heading); color: var(--color-foreground);">
+            <span style="color: var(--color-accent);">//</span> Change Password
+          </h3>
+
+          <form id="password-form" class="max-w-md">
+            <div class="flex flex-col gap-4">
+              <div class="form-group">
+                <label class="cyber-label" for="current-password">Current Password</label>
+                <div class="cyber-input-wrapper">
+                  <span class="cyber-input-prefix">&gt;</span>
+                  <input type="password" id="current-password" name="current-password" class="cyber-input" placeholder="Enter current password...">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="cyber-label" for="new-password">New Password</label>
+                <div class="cyber-input-wrapper">
+                  <span class="cyber-input-prefix">&gt;</span>
+                  <input type="password" id="new-password" name="new-password" class="cyber-input" placeholder="Minimum 8 characters...">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="cyber-label" for="confirm-password">Confirm Password</label>
+                <div class="cyber-input-wrapper">
+                  <span class="cyber-input-prefix">&gt;</span>
+                  <input type="password" id="confirm-password" name="confirm-password" class="cyber-input" placeholder="Re-enter password...">
+                </div>
+              </div>
+              <div class="flex justify-end mt-2">
+                <button type="submit" class="cyber-btn">
+                  <i data-lucide="lock" style="width:14px;height:14px;stroke-width:1.5;"></i>
+                  Update Password
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Two-Factor Auth -->
+        <div class="cyber-card p-6 sm:p-8 mb-6">
+          <h3 class="text-base font-semibold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+            <span style="color: var(--color-accent);">//</span> Two-Factor Authentication
+          </h3>
+
+          <div class="toggle-row flex items-center justify-between py-3">
+            <div class="toggle-label">
+              <p style="font-family: var(--font-body); font-size: 0.875rem; color: var(--color-foreground);">Enable 2FA</p>
+              <p style="font-family: var(--font-label); font-size: 0.6875rem; color: var(--color-muted-foreground); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.125rem;">
+                Status: <span class="toggle-status" style="color: var(--color-accent);">ENABLED</span>
+              </p>
+            </div>
+            <label class="cyber-toggle">
+              <input type="checkbox" data-setting="two-factor" checked>
+              <div class="cyber-toggle-track">
+                <div class="cyber-toggle-thumb"></div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Active Sessions -->
+        <div class="cyber-card cyber-card--terminal p-6 sm:p-8">
+          <div class="terminal-header">
+            <span class="terminal-dot"></span>
+            <span class="terminal-dot"></span>
+            <span class="terminal-dot"></span>
+            <span class="terminal-title">active_sessions.log</span>
+          </div>
+
+          <h3 class="text-base font-semibold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+            <span style="color: var(--color-accent);">//</span> Active Sessions
+          </h3>
+
+          <div class="overflow-x-auto">
+            <table class="cyber-table" id="sessions-table">
+              <thead>
+                <tr>
+                  <th>Device</th>
+                  <th>Location</th>
+                  <th>IP</th>
+                  <th>Last Active</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="current-session">
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <i data-lucide="monitor" style="width:14px;height:14px;stroke-width:1.5;color:var(--color-accent);"></i>
+                      Chrome / Windows 11
+                    </div>
+                  </td>
+                  <td>Neo-Tokyo</td>
+                  <td style="font-family:var(--font-label); font-size:0.75rem;">192.168.1.xxx</td>
+                  <td>
+                    <span class="flex items-center gap-1.5">
+                      <span class="cyber-notification-dot"></span>
+                      Now
+                    </span>
+                  </td>
+                  <td><span class="cyber-badge">Current</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <i data-lucide="monitor" style="width:14px;height:14px;stroke-width:1.5;color:var(--color-muted-foreground);"></i>
+                      Firefox / Linux
+                    </div>
+                  </td>
+                  <td>Sector 9K</td>
+                  <td style="font-family:var(--font-label); font-size:0.75rem;">10.0.42.xxx</td>
+                  <td>3 hours ago</td>
+                  <td>
+                    <button class="cyber-btn cyber-btn--sm cyber-btn--outline" data-action="terminate-session" style="padding:0.25rem 0.625rem; min-height: 28px;">
+                      Revoke
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <i data-lucide="smartphone" style="width:14px;height:14px;stroke-width:1.5;color:var(--color-muted-foreground);"></i>
+                      Mobile / Android
+                    </div>
+                  </td>
+                  <td>The Sprawl</td>
+                  <td style="font-family:var(--font-label); font-size:0.75rem;">172.16.0.xxx</td>
+                  <td>1 day ago</td>
+                  <td>
+                    <button class="cyber-btn cyber-btn--sm cyber-btn--outline" data-action="terminate-session" style="padding:0.25rem 0.625rem; min-height: 28px;">
+                      Revoke
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="flex justify-end mt-6">
+            <button id="terminate-all-sessions" class="cyber-btn cyber-btn--destructive cyber-btn--sm">
+              <i data-lucide="skull" style="width:14px;height:14px;stroke-width:1.5;"></i>
+              Terminate All Others
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: NOTIFICATIONS ───────────────────── -->
+      <div id="tab-notifications" class="cyber-tab-panel" role="tabpanel">
+        <div class="cyber-card p-6 sm:p-8 mb-6">
+          <h3 class="text-base font-semibold tracking-wider mb-6" style="font-family: var(--font-heading); color: var(--color-foreground);">
+            <span style="color: var(--color-accent);">//</span> Notification Preferences
+          </h3>
+
+          <div class="flex flex-col divide-y divide-[var(--color-border)]">
+            <!-- Order Updates -->
+            <div class="toggle-row flex items-center justify-between py-4">
+              <div class="toggle-label">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="package" style="width:16px;height:16px;stroke-width:1.5;color:var(--color-accent);"></i>
+                  <span style="font-family: var(--font-body); font-size: 0.875rem; color: var(--color-foreground);">Order Updates</span>
+                </div>
+                <p style="font-family: var(--font-label); font-size: 0.6875rem; color: var(--color-muted-foreground); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.25rem; padding-left: 1.5rem;">
+                  Status: <span class="toggle-status" style="color: var(--color-accent);">ENABLED</span>
+                </p>
+              </div>
+              <label class="cyber-toggle">
+                <input type="checkbox" data-setting="order-updates" checked>
+                <div class="cyber-toggle-track">
+                  <div class="cyber-toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+
+            <!-- Price Drops -->
+            <div class="toggle-row flex items-center justify-between py-4">
+              <div class="toggle-label">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="trending-down" style="width:16px;height:16px;stroke-width:1.5;color:var(--color-accent-secondary);"></i>
+                  <span style="font-family: var(--font-body); font-size: 0.875rem; color: var(--color-foreground);">Price Drops</span>
+                </div>
+                <p style="font-family: var(--font-label); font-size: 0.6875rem; color: var(--color-muted-foreground); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.25rem; padding-left: 1.5rem;">
+                  Status: <span class="toggle-status" style="color: var(--color-accent);">ENABLED</span>
+                </p>
+              </div>
+              <label class="cyber-toggle">
+                <input type="checkbox" data-setting="price-drops" checked>
+                <div class="cyber-toggle-track">
+                  <div class="cyber-toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+
+            <!-- New Messages -->
+            <div class="toggle-row flex items-center justify-between py-4">
+              <div class="toggle-label">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="message-square" style="width:16px;height:16px;stroke-width:1.5;color:var(--color-accent-tertiary);"></i>
+                  <span style="font-family: var(--font-body); font-size: 0.875rem; color: var(--color-foreground);">New Messages</span>
+                </div>
+                <p style="font-family: var(--font-label); font-size: 0.6875rem; color: var(--color-muted-foreground); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.25rem; padding-left: 1.5rem;">
+                  Status: <span class="toggle-status" style="color: var(--color-accent);">ENABLED</span>
+                </p>
+              </div>
+              <label class="cyber-toggle">
+                <input type="checkbox" data-setting="new-messages" checked>
+                <div class="cyber-toggle-track">
+                  <div class="cyber-toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+
+            <!-- Marketing -->
+            <div class="toggle-row flex items-center justify-between py-4">
+              <div class="toggle-label">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="megaphone" style="width:16px;height:16px;stroke-width:1.5;color:var(--color-muted-foreground);"></i>
+                  <span style="font-family: var(--font-body); font-size: 0.875rem; color: var(--color-foreground);">Marketing & Promos</span>
+                </div>
+                <p style="font-family: var(--font-label); font-size: 0.6875rem; color: var(--color-muted-foreground); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.25rem; padding-left: 1.5rem;">
+                  Status: <span class="toggle-status" style="color: var(--color-muted-foreground);">DISABLED</span>
+                </p>
+              </div>
+              <label class="cyber-toggle">
+                <input type="checkbox" data-setting="marketing">
+                <div class="cyber-toggle-track">
+                  <div class="cyber-toggle-thumb"></div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delivery Settings -->
+        <div class="cyber-card p-6 sm:p-8">
+          <h3 class="text-base font-semibold tracking-wider mb-6" style="font-family: var(--font-heading); color: var(--color-foreground);">
+            <span style="color: var(--color-accent);">//</span> Delivery Channel
+          </h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="form-group">
+              <label class="cyber-label" for="notify-channel">Channel</label>
+              <div class="cyber-input-wrapper">
+                <span class="cyber-input-prefix">&gt;</span>
+                <select id="notify-channel" class="cyber-select">
+                  <option value="email" selected>Email</option>
+                  <option value="push">Push Notification</option>
+                  <option value="sms">SMS</option>
+                  <option value="all">All Channels</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="cyber-label" for="notify-schedule">Frequency</label>
+              <div class="cyber-input-wrapper">
+                <span class="cyber-input-prefix">&gt;</span>
+                <select id="notify-schedule" class="cyber-select">
+                  <option value="realtime" selected>Real-time</option>
+                  <option value="hourly">Hourly Digest</option>
+                  <option value="daily">Daily Summary</option>
+                  <option value="weekly">Weekly Report</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end mt-6">
+            <button class="cyber-btn cyber-btn--glitch" data-action="save">
+              <i data-lucide="save" style="width:14px;height:14px;stroke-width:1.5;"></i>
+              Save Preferences
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: BILLING ─────────────────────────── -->
+      <div id="tab-billing" class="cyber-tab-panel" role="tabpanel">
+
+        <!-- Payment Methods -->
+        <div class="cyber-card p-6 sm:p-8 mb-6">
+          <h3 class="text-base font-semibold tracking-wider mb-6" style="font-family: var(--font-heading); color: var(--color-foreground);">
+            <span style="color: var(--color-accent);">//</span> Payment Methods
+          </h3>
+
+          <div class="flex flex-wrap gap-4">
+            <!-- Visa Card -->
+            <div class="cyber-payment-card">
+              <div class="flex justify-between items-start">
+                <span style="font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-foreground);">VISA</span>
+                <span class="cyber-badge">Primary</span>
+              </div>
+              <div class="cyber-payment-card-number">•••• •••• •••• 4242</div>
+              <div class="flex justify-between items-end">
+                <div>
+                  <div class="cyber-payment-card-label">Card Holder</div>
+                  <div class="cyber-payment-card-value">NEXUS RUNNER</div>
+                </div>
+                <div>
+                  <div class="cyber-payment-card-label">Expires</div>
+                  <div class="cyber-payment-card-value">09/27</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Crypto Wallet -->
+            <div class="cyber-payment-card" style="border-color: var(--color-accent-secondary);">
+              <div class="flex justify-between items-start">
+                <span style="font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-accent-secondary);">CRYPTO</span>
+                <span class="cyber-badge cyber-badge--secondary">Wallet</span>
+              </div>
+              <div class="cyber-payment-card-number" style="font-size:0.8125rem;">WALLET_0x7f...3a2e</div>
+              <div class="flex justify-between items-end">
+                <div>
+                  <div class="cyber-payment-card-label">Network</div>
+                  <div class="cyber-payment-card-value">ETH Mainnet</div>
+                </div>
+                <div>
+                  <div class="cyber-payment-card-label">Status</div>
+                  <div class="cyber-payment-card-value" style="color: var(--color-accent);">Active</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <button class="cyber-btn cyber-btn--outline cyber-btn--sm">
+              <i data-lucide="plus" style="width:14px;height:14px;stroke-width:1.5;"></i>
+              Add Payment Method
+            </button>
+          </div>
+        </div>
+
+        <!-- Billing Address -->
+        <div class="cyber-card p-6 sm:p-8 mb-6">
+          <h3 class="text-base font-semibold tracking-wider mb-6" style="font-family: var(--font-heading); color: var(--color-foreground);">
+            <span style="color: var(--color-accent);">//</span> Billing Address
+          </h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="form-group sm:col-span-2">
+              <label class="cyber-label" for="billing-street">Street Address</label>
+              <div class="cyber-input-wrapper">
+                <span class="cyber-input-prefix">&gt;</span>
+                <input type="text" id="billing-street" class="cyber-input" value="Block 7G, Neon Heights Tower" placeholder="Enter address...">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="cyber-label" for="billing-city">City</label>
+              <div class="cyber-input-wrapper">
+                <span class="cyber-input-prefix">&gt;</span>
+                <input type="text" id="billing-city" class="cyber-input" value="Neo-Tokyo" placeholder="Enter city...">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="cyber-label" for="billing-zip">Postal Code</label>
+              <div class="cyber-input-wrapper">
+                <span class="cyber-input-prefix">&gt;</span>
+                <input type="text" id="billing-zip" class="cyber-input" value="NT-77042" placeholder="Enter code...">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end mt-6">
+            <button class="cyber-btn cyber-btn--glitch" data-action="save">
+              <i data-lucide="save" style="width:14px;height:14px;stroke-width:1.5;"></i>
+              Save Address
+            </button>
+          </div>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="cyber-card cyber-card--terminal p-6 sm:p-8">
+          <div class="terminal-header">
+            <span class="terminal-dot"></span>
+            <span class="terminal-dot"></span>
+            <span class="terminal-dot"></span>
+            <span class="terminal-title">transaction_log.dat</span>
+          </div>
+
+          <h3 class="text-base font-semibold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+            <span style="color: var(--color-accent);">//</span> Recent Transactions
+          </h3>
+
+          <div class="overflow-x-auto">
+            <table class="cyber-table">
+              <thead>
+                <tr>
+                  <th>TX ID</th>
+                  <th>Date</th>
+                  <th>Item</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="transactions-body">
+                <!-- Populated by profile.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="flex items-center justify-between mt-4">
+            <span style="font-family: var(--font-label); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-muted-foreground);">
+              <span style="color: var(--color-accent);">&gt;</span> showing 5 of 47 transactions
+            </span>
+            <button class="cyber-btn cyber-btn--outline cyber-btn--sm">
+              View All
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── FOOTER ─── -->
+      <footer class="mt-12 pt-6 border-t border-[var(--color-border)]">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p style="font-family: var(--font-label); font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted-foreground);">
+            <span style="color: var(--color-accent);">$</span> CyberMarket v2.7.1 // All rights reserved 2026
+          </p>
+          <p style="font-family: var(--font-label); font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-muted-foreground);">
+            <span class="cyber-flicker" style="color: var(--color-accent);">●</span> System Status: Operational
+          </p>
+        </div>
+      </footer>
+
+    </div>
+  </main>
+
+  <!-- ═══════════ SCRIPTS ═══════════ -->
+  <script src="./js/effects.js"></script>
+  <script src="./js/app.js"></script>
+  <script src="./js/profile.js"></script>
+  <script>
+    // Initialize app with current page
+    document.addEventListener('DOMContentLoaded', () => {
+      CyberApp.init('settings');
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberMarket — The Underground Marketplace</title>
+  <meta name="description" content="CyberMarket: Your gateway to the underground e-commerce sprawl. Gear, tech, and digital goods for the modern netrunner.">
+  <meta http-equiv="refresh" content="0; url=profile.html">
+  <style>
+    body {
+      background: #0a0a0f;
+      color: #00ff88;
+      font-family: "JetBrains Mono", monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .loading {
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 0.875rem;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="loading">&gt; Initializing system...</div>
+  <script>
+    // Fallback redirect
+    window.location.href = 'profile.html';
+  </script>
+</body>
+</html>
