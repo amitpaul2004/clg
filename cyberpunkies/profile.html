@@ -6,13 +6,50 @@
   <title>NEXUS_RUNNER // Profile &amp; Settings — CyberMarket</title>
   <meta name="description" content="User profile and settings panel for CyberMarket — the underground e-commerce marketplace of the sprawl.">
 
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
   <!-- Tailwind CSS v4 CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-  <!-- Design System CSS -->
+  <!-- Tailwind v4 Theme Tokens (must be inline for CDN) -->
   <style type="text/tailwindcss">
-    @import url('./css/theme.css');
+    @theme {
+      --color-background:        #0a0a0f;
+      --color-foreground:        #e0e0e0;
+      --color-card:              #12121a;
+      --color-muted:             #1c1c2e;
+      --color-muted-foreground:  #6b7280;
+      --color-accent:            #00ff88;
+      --color-accent-secondary:  #ff00ff;
+      --color-accent-tertiary:   #00d4ff;
+      --color-border:            #2a2a3a;
+      --color-input:             #12121a;
+      --color-ring:              #00ff88;
+      --color-destructive:       #ff3366;
+      --color-surface:           #16161f;
+      --color-surface-hover:     #1e1e2e;
+      --color-accent-dim:        #00ff8820;
+      --color-accent-muted:      #00ff8840;
+      --color-secondary-dim:     #ff00ff20;
+      --color-tertiary-dim:      #00d4ff20;
+
+      --font-heading: "Orbitron", "Share Tech Mono", monospace;
+      --font-body:    "JetBrains Mono", "Fira Code", "Consolas", monospace;
+      --font-label:   "Share Tech Mono", monospace;
+
+      --shadow-neon:            0 0 5px #00ff88, 0 0 10px #00ff8840;
+      --shadow-neon-sm:         0 0 3px #00ff88, 0 0 6px #00ff8830;
+      --shadow-neon-lg:         0 0 10px #00ff88, 0 0 20px #00ff8860, 0 0 40px #00ff8830;
+      --shadow-neon-secondary:  0 0 5px #ff00ff, 0 0 20px #ff00ff60;
+      --shadow-neon-tertiary:   0 0 5px #00d4ff, 0 0 20px #00d4ff60;
+      --shadow-card:            0 4px 24px rgba(0, 0, 0, 0.5);
+    }
   </style>
+
+  <!-- Design System CSS (base reset, effects, components) -->
   <link rel="stylesheet" href="./css/theme.css">
   <link rel="stylesheet" href="./css/cyberpunk.css">
   <link rel="stylesheet" href="./css/components.css">
@@ -132,19 +169,19 @@
           <!-- Stats Row -->
           <div class="cyber-divider"></div>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-0">
-            <div class="cyber-stat" style="border-right: 1px solid var(--color-border);">
+            <div class="cyber-stat border-r border-border">
               <span class="cyber-stat-value" data-count="47">0</span>
               <span class="cyber-stat-label">Orders</span>
             </div>
-            <div class="cyber-stat sm:border-r" style="border-right: 1px solid var(--color-border);">
+            <div class="cyber-stat sm:border-r border-border">
               <span class="cyber-stat-value" data-count="128">0</span>
               <span class="cyber-stat-label">Wishlist</span>
             </div>
-            <div class="cyber-stat" style="border-right: 1px solid var(--color-border); border-top: 1px solid var(--color-border);" class="sm:border-t-0">
+            <div class="cyber-stat border-r border-border border-t sm:border-t-0">
               <span class="cyber-stat-value" data-count="23">0</span>
               <span class="cyber-stat-label">Reviews</span>
             </div>
-            <div class="cyber-stat" style="border-top: 1px solid var(--color-border);">
+            <div class="cyber-stat border-t sm:border-t-0">
               <span class="cyber-stat-value" data-count="12750" data-prefix="Ȼ">0</span>
               <span class="cyber-stat-label">Credits</span>
             </div>
