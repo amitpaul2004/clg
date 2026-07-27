@@ -16,6 +16,8 @@
 
   <!-- Tailwind v4 Theme Tokens (must be inline for CDN) -->
   <style type="text/tailwindcss">
+    @import "tailwindcss";
+
     @theme {
       --color-background:        #0a0a0f;
       --color-foreground:        #e0e0e0;
@@ -31,20 +33,20 @@
       --color-destructive:       #ff3366;
       --color-surface:           #16161f;
       --color-surface-hover:     #1e1e2e;
-      --color-accent-dim:        #00ff8820;
-      --color-accent-muted:      #00ff8840;
-      --color-secondary-dim:     #ff00ff20;
-      --color-tertiary-dim:      #00d4ff20;
+      --color-accent-dim:        rgba(0, 255, 136, 0.12);
+      --color-accent-muted:      rgba(0, 255, 136, 0.25);
+      --color-secondary-dim:     rgba(255, 0, 255, 0.12);
+      --color-tertiary-dim:      rgba(0, 212, 255, 0.12);
 
       --font-heading: "Orbitron", "Share Tech Mono", monospace;
       --font-body:    "JetBrains Mono", "Fira Code", "Consolas", monospace;
       --font-label:   "Share Tech Mono", monospace;
 
-      --shadow-neon:            0 0 5px #00ff88, 0 0 10px #00ff8840;
-      --shadow-neon-sm:         0 0 3px #00ff88, 0 0 6px #00ff8830;
-      --shadow-neon-lg:         0 0 10px #00ff88, 0 0 20px #00ff8860, 0 0 40px #00ff8830;
-      --shadow-neon-secondary:  0 0 5px #ff00ff, 0 0 20px #ff00ff60;
-      --shadow-neon-tertiary:   0 0 5px #00d4ff, 0 0 20px #00d4ff60;
+      --shadow-neon:            0 0 5px #00ff88, 0 0 10px rgba(0, 255, 136, 0.25);
+      --shadow-neon-sm:         0 0 3px #00ff88, 0 0 6px rgba(0, 255, 136, 0.2);
+      --shadow-neon-lg:         0 0 10px #00ff88, 0 0 20px rgba(0, 255, 136, 0.4), 0 0 40px rgba(0, 255, 136, 0.2);
+      --shadow-neon-secondary:  0 0 5px #ff00ff, 0 0 20px rgba(255, 0, 255, 0.4);
+      --shadow-neon-tertiary:   0 0 5px #00d4ff, 0 0 20px rgba(0, 212, 255, 0.4);
       --shadow-card:            0 4px 24px rgba(0, 0, 0, 0.5);
     }
   </style>
@@ -57,7 +59,7 @@
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
-<body class="cyber-scanlines cyber-grid cyber-gradient-mesh">
+<body class="bg-background text-foreground font-body cyber-scanlines cyber-grid cyber-gradient-mesh">
 
   <!-- ═══════════ MOBILE HEADER ═══════════ -->
   <header class="cyber-mobile-header">
@@ -112,7 +114,7 @@
   </aside>
 
   <!-- ═══════════ MAIN CONTENT ═══════════ -->
-  <main class="lg:ml-[260px] min-h-screen pt-[56px] lg:pt-0">
+  <main class="cyber-main-content">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
 
       <!-- ─── PAGE HEADER ─── -->
