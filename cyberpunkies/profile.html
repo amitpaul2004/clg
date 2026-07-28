@@ -106,10 +106,10 @@
     </nav>
 
     <div class="cyber-sidebar-footer">
-      <a href="#" class="cyber-sidebar-item" style="padding-left:0; color: var(--color-destructive);">
+      <button id="disconnect-btn" class="cyber-sidebar-item w-full text-left" style="padding-left:0; color: var(--color-destructive); cursor: pointer; background: none; border: none;">
         <i data-lucide="log-out" style="width:18px;height:18px;stroke-width:1.5;"></i>
         Disconnect
-      </a>
+      </button>
     </div>
   </aside>
 
@@ -728,6 +728,63 @@
 
     </div>
   </main>
+
+  <!-- ═══════════ DISCONNECT CONFIRMATION MODAL ═══════════ -->
+  <div id="disconnect-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-[rgba(10,10,15,0.85)] backdrop-blur-md">
+    <div class="cyber-card cyber-card--terminal max-w-md w-full p-6 relative border-[var(--color-destructive)] shadow-[0_0_20px_rgba(255,51,102,0.3)]">
+      <div class="terminal-header" style="background: rgba(255, 51, 102, 0.15);">
+        <span class="terminal-dot" style="background:#ff3366;"></span>
+        <span class="terminal-dot" style="background:#ffbd2e;"></span>
+        <span class="terminal-dot" style="background:#6b7280;"></span>
+        <span class="terminal-title" style="color: var(--color-destructive);">SYS_WARN // TERMINATE_LINK.EXE</span>
+      </div>
+
+      <div class="text-center py-4">
+        <div class="inline-flex items-center justify-center p-3 mb-4 rounded-full border border-[var(--color-destructive)] bg-[rgba(255,51,102,0.1)] text-[var(--color-destructive)]">
+          <i data-lucide="power-off" style="width:32px;height:32px;stroke-width:1.5;"></i>
+        </div>
+        <h3 class="text-xl font-bold tracking-wider mb-2 cyber-glitch" data-text="TERMINATE NEURAL LINK?" style="font-family: var(--font-heading); color: var(--color-destructive);">
+          TERMINATE NEURAL LINK?
+        </h3>
+        <p style="font-family: var(--font-body); font-size: 0.8125rem; color: var(--color-muted-foreground);" class="mb-6">
+          Disconnecting will suspend your active darknet session and lock secure datastore access.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <button id="cancel-disconnect-btn" class="cyber-btn cyber-btn--outline w-full sm:w-auto">
+            Cancel
+          </button>
+          <button id="confirm-disconnect-btn" class="cyber-btn cyber-btn--destructive w-full sm:w-auto">
+            <i data-lucide="log-out" style="width:14px;height:14px;stroke-width:1.5;"></i>
+            Confirm Disconnect
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SYSTEM DISCONNECTED OVERLAY ═══════════ -->
+  <div id="disconnected-overlay" class="hidden fixed inset-0 z-[9999] flex flex-col items-center justify-center p-6 bg-[#0a0a0f] cyber-scanlines cyber-grid">
+    <div class="cyber-card cyber-card--holographic max-w-lg w-full text-center p-8 sm:p-12 border-[var(--color-destructive)] shadow-[0_0_40px_rgba(255,51,102,0.2)]">
+      <div class="inline-flex items-center justify-center p-4 mb-6 rounded-full border border-[var(--color-destructive)] bg-[rgba(255,51,102,0.1)] text-[var(--color-destructive)]">
+        <i data-lucide="shield-alert" style="width:48px;height:48px;stroke-width:1.5;"></i>
+      </div>
+      <div class="mb-4">
+        <span class="cyber-badge cyber-badge--destructive">Offline // Disconnected</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-black tracking-widest mb-3 cyber-glitch" data-text="NEURAL LINK TERMINATED" style="font-family: var(--font-heading); color: var(--color-destructive);">
+        NEURAL LINK TERMINATED
+      </h2>
+      <p style="font-family: var(--font-body); font-size: 0.875rem; color: var(--color-muted-foreground);" class="mb-8">
+        Your datanet session has been safely closed. Re-authenticate your neural token to resume access to CyberMarket.
+      </p>
+
+      <button id="reconnect-btn" class="cyber-btn cyber-btn--glitch w-full py-3 text-base">
+        <i data-lucide="zap" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Re-Connect Neural Link
+      </button>
+    </div>
+  </div>
 
   <!-- ═══════════ SCRIPTS ═══════════ -->
   <script src="./js/effects.js"></script>

@@ -1,7 +1,7 @@
 /**
  * ═══════════════════════════════════════════════════════
  *  CYBERPUNK APP SHELL — app.js
- *  Sidebar toggle · Active page · Global shortcuts
+ *  Sidebar toggle · Active page · Disconnect modal · Shortcuts
  * ═══════════════════════════════════════════════════════
  */
 
@@ -60,15 +60,13 @@ const CyberApp = (() => {
    */
   function initKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
-      // Escape closes sidebar on mobile
+      // Escape closes sidebar / modal
       if (e.key === 'Escape') {
         closeSidebar();
-      }
-
-      // Ctrl+K for search (future feature)
-      if (e.key === 'k' && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        // Future: open search modal
+        const modal = document.getElementById('disconnect-modal');
+        if (modal && !modal.classList.contains('hidden')) {
+          modal.classList.add('hidden');
+        }
       }
     });
   }
@@ -154,6 +152,58 @@ const CyberApp = (() => {
   }
 
   /**
+   * Initialize Disconnect Modal & System Disconnect flow.
+   */
+  function initDisconnect() {
+    const disconnectBtn = document.getElementById('disconnect-btn');
+    const modal = document.getElementById('disconnect-modal');
+    const overlay = document.getElementById('disconnected-overlay');
+    const cancelBtn = document.getElementById('cancel-disconnect-btn');
+    const confirmBtn = document.getElementById('confirm-disconnect-btn');
+    const reconnectBtn = document.getElementById('reconnect-btn');
+
+    if (!disconnectBtn || !modal || !overlay) return;
+
+    // Open disconnect confirmation modal
+    disconnectBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      modal.classList.remove('hidden');
+      closeSidebar();
+    });
+
+    // Close modal on cancel button
+    cancelBtn?.addEventListener('click', () => {
+      modal.classList.add('hidden');
+    });
+
+    // Confirm disconnect action -> Redirect to Login Page
+    confirmBtn?.addEventListener('click', () => {
+      modal.classList.add('hidden');
+      localStorage.removeItem('cybermarket_auth_token');
+      showToast('SESSION TERMINATED // REDIRECTING TO LOGIN...', 'error');
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 800);
+    });
+
+    // Re-connect session action
+    reconnectBtn?.addEventListener('click', () => {
+      overlay.classList.add('hidden');
+      showToast('NEURAL LINK ESTABLISHED // WELCOME BACK', 'success');
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    });
+
+    // Close modal if background overlay clicked
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.add('hidden');
+      }
+    });
+  }
+
+  /**
    * Initialize the app shell.
    * @param {string} currentPage - ID of the current page
    */
@@ -174,6 +224,9 @@ const CyberApp = (() => {
     if (currentPage) {
       setActivePage(currentPage);
     }
+
+    // Disconnect flow
+    initDisconnect();
 
     // Keyboard shortcuts
     initKeyboardShortcuts();

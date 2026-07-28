@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberMarket // Authentication Terminal</title>
+  <meta name="description" content="Access the CyberMarket Underground Sprawl — Authenticate your netrunner neural credentials.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS v4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <!-- Tailwind v4 Theme Tokens -->
+  <style type="text/tailwindcss">
+    @import "tailwindcss";
+
+    @theme {
+      --color-background:        #0a0a0f;
+      --color-foreground:        #e0e0e0;
+      --color-card:              #12121a;
+      --color-muted:             #1c1c2e;
+      --color-muted-foreground:  #6b7280;
+      --color-accent:            #00ff88;
+      --color-accent-secondary:  #ff00ff;
+      --color-accent-tertiary:   #00d4ff;
+      --color-border:            #2a2a3a;
+      --color-input:             #12121a;
+      --color-ring:              #00ff88;
+      --color-destructive:       #ff3366;
+
+      --font-heading: "Orbitron", "Share Tech Mono", monospace;
+      --font-body:    "JetBrains Mono", "Fira Code", "Consolas", monospace;
+      --font-label:   "Share Tech Mono", monospace;
+
+      --shadow-neon:            0 0 5px #00ff88, 0 0 10px rgba(0, 255, 136, 0.25);
+      --shadow-neon-sm:         0 0 3px #00ff88, 0 0 6px rgba(0, 255, 136, 0.2);
+      --shadow-neon-lg:         0 0 10px #00ff88, 0 0 20px rgba(0, 255, 136, 0.4), 0 0 40px rgba(0, 255, 136, 0.2);
+      --shadow-neon-secondary:  0 0 5px #ff00ff, 0 0 20px rgba(255, 0, 255, 0.4);
+      --shadow-card:            0 4px 24px rgba(0, 0, 0, 0.5);
+    }
+  </style>
+
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="./css/theme.css">
+  <link rel="stylesheet" href="./css/cyberpunk.css">
+  <link rel="stylesheet" href="./css/components.css">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="bg-background text-foreground font-body cyber-scanlines cyber-grid cyber-gradient-mesh flex items-center justify-center min-h-screen p-4">
+
+  <!-- ═══════════ MAIN AUTH CARD CONTAINER ═══════════ -->
+  <div class="max-w-md w-full my-8">
+
+    <!-- Logo / Brand Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center gap-3 mb-2">
+        <i data-lucide="zap" class="text-[var(--color-accent)]" style="width:28px;height:28px;filter:drop-shadow(0 0 8px var(--color-accent));"></i>
+        <span class="text-2xl font-black tracking-widest uppercase" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          CYBER<span style="color: var(--color-accent);">MARKET</span>
+        </span>
+      </div>
+      <p style="font-family: var(--font-label); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted-foreground);">
+        <span style="color: var(--color-accent);">&gt;</span> AUTHENTICATION_TERMINAL // v2.7.1
+      </p>
+    </div>
+
+    <!-- Terminal Auth Card -->
+    <div class="cyber-card cyber-card--terminal p-6 sm:p-8 relative cyber-corner-accents border-[var(--color-accent)] shadow-[0_0_30px_rgba(0,255,136,0.15)]">
+      <div class="terminal-header">
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-title">neural_access.exe</span>
+      </div>
+
+      <!-- Auth Mode Tabs -->
+      <div class="cyber-tabs mb-6" role="tablist">
+        <button id="tab-login-btn" class="cyber-tab cyber-tab--active flex-1 justify-center" role="tab">
+          <i data-lucide="key" style="width:14px;height:14px;stroke-width:1.5;"></i>
+          Login
+        </button>
+        <button id="tab-register-btn" class="cyber-tab flex-1 justify-center" role="tab">
+          <i data-lucide="user-plus" style="width:14px;height:14px;stroke-width:1.5;"></i>
+          Register
+        </button>
+      </div>
+
+      <!-- Status Message Alert Box -->
+      <div id="auth-status" class="hidden mb-6 p-3 text-xs uppercase tracking-wider font-mono border" style="clip-path: polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px));">
+      </div>
+
+      <!-- ── LOGIN FORM ────────────────────────── -->
+      <form id="login-form" class="cyber-tab-panel cyber-tab-panel--active flex flex-col gap-4">
+        <div class="form-group">
+          <label class="cyber-label" for="login-identity">Identity (Handle / Email)</label>
+          <div class="cyber-input-wrapper">
+            <span class="cyber-input-prefix">&gt;</span>
+            <input type="text" id="login-identity" class="cyber-input" value="nexus@darknet.io" placeholder="Enter handle or email..." required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="cyber-label" for="login-password">Neural Passkey</label>
+          <div class="cyber-input-wrapper">
+            <span class="cyber-input-prefix">&gt;</span>
+            <input type="password" id="login-password" class="cyber-input" value="cyberpunk123" placeholder="Enter password..." required>
+          </div>
+        </div>
+
+        <button type="submit" id="login-submit-btn" class="cyber-btn cyber-btn--glitch mt-4 py-3 text-sm">
+          <i data-lucide="power" style="width:16px;height:16px;stroke-width:1.5;"></i>
+          Initialize Session
+        </button>
+
+        <div class="text-center mt-2">
+          <span style="font-family: var(--font-label); font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-muted-foreground);">
+            Demo account preset: <span style="color: var(--color-accent);">nexus@darknet.io</span> / <span style="color: var(--color-accent);">cyberpunk123</span>
+          </span>
+        </div>
+      </form>
+
+      <!-- ── REGISTER FORM ─────────────────────── -->
+      <form id="register-form" class="cyber-tab-panel flex flex-col gap-4">
+        <div class="form-group">
+          <label class="cyber-label" for="reg-handle">Netrunner Handle</label>
+          <div class="cyber-input-wrapper">
+            <span class="cyber-input-prefix">&gt;</span>
+            <input type="text" id="reg-handle" class="cyber-input" placeholder="e.g. CYBER_GHOST_99" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="cyber-label" for="reg-email">Datanet Email</label>
+          <div class="cyber-input-wrapper">
+            <span class="cyber-input-prefix">&gt;</span>
+            <input type="email" id="reg-email" class="cyber-input" placeholder="e.g. ghost@darknet.io" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="cyber-label" for="reg-password">Passkey (Min 8 Chars)</label>
+          <div class="cyber-input-wrapper">
+            <span class="cyber-input-prefix">&gt;</span>
+            <input type="password" id="reg-password" class="cyber-input" placeholder="Create strong passkey..." required minlength="8">
+          </div>
+        </div>
+
+        <button type="submit" id="reg-submit-btn" class="cyber-btn cyber-btn--glitch mt-4 py-3 text-sm">
+          <i data-lucide="user-check" style="width:16px;height:16px;stroke-width:1.5;"></i>
+          Register Credentials (MongoDB)
+        </button>
+      </form>
+
+    </div>
+
+    <!-- Footer System Status -->
+    <div class="text-center mt-6">
+      <p style="font-family: var(--font-label); font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-muted-foreground);">
+        <span class="cyber-flicker" style="color: var(--color-accent);">●</span> Database Mode: <span id="db-status-text" style="color: var(--color-accent-tertiary);">MongoDB Datastore</span>
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ═══════════ SCRIPTS ═══════════ -->
+  <script src="./js/effects.js"></script>
+  <script src="./js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+
+      const tabLoginBtn = document.getElementById('tab-login-btn');
+      const tabRegBtn = document.getElementById('tab-register-btn');
+      const loginForm = document.getElementById('login-form');
+      const regForm = document.getElementById('register-form');
+      const statusBox = document.getElementById('auth-status');
+
+      // Check server API status
+      fetch('/api/status')
+        .then(res => res.json())
+        .then(data => {
+          const dbText = document.getElementById('db-status-text');
+          if (dbText) dbText.textContent = data.database;
+        })
+        .catch(() => {});
+
+      // Tab switching
+      tabLoginBtn.addEventListener('click', () => {
+        tabLoginBtn.classList.add('cyber-tab--active');
+        tabRegBtn.classList.remove('cyber-tab--active');
+        loginForm.classList.add('cyber-tab-panel--active');
+        regForm.classList.remove('cyber-tab-panel--active');
+        hideStatus();
+      });
+
+      tabRegBtn.addEventListener('click', () => {
+        tabRegBtn.classList.add('cyber-tab--active');
+        tabLoginBtn.classList.remove('cyber-tab--active');
+        regForm.classList.add('cyber-tab-panel--active');
+        loginForm.classList.remove('cyber-tab-panel--active');
+        hideStatus();
+      });
+
+      function showStatus(msg, type = 'error') {
+        statusBox.classList.remove('hidden');
+        if (type === 'error') {
+          statusBox.style.borderColor = 'var(--color-destructive)';
+          statusBox.style.color = 'var(--color-destructive)';
+          statusBox.style.background = 'rgba(255, 51, 102, 0.1)';
+          statusBox.innerHTML = `&gt; ERROR: ${msg}`;
+        } else {
+          statusBox.style.borderColor = 'var(--color-accent)';
+          statusBox.style.color = 'var(--color-accent)';
+          statusBox.style.background = 'rgba(0, 255, 136, 0.1)';
+          statusBox.innerHTML = `&gt; SUCCESS: ${msg}`;
+        }
+      }
+
+      function hideStatus() {
+        statusBox.classList.add('hidden');
+      }
+
+      // Handle Login
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const identity = document.getElementById('login-identity').value.trim();
+        const password = document.getElementById('login-password').value.trim();
+        const submitBtn = document.getElementById('login-submit-btn');
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = '$ AUTHENTICATING...';
+        hideStatus();
+
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ identity, password })
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            showStatus(data.error || 'Authentication failed', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i data-lucide="power" style="width:16px;height:16px;"></i> Initialize Session';
+            lucide.createIcons();
+            return;
+          }
+
+          // Save auth token & user info
+          localStorage.setItem('cybermarket_auth_token', data.token);
+          if (data.user) {
+            const existingData = JSON.parse(localStorage.getItem('cybermarket_user_data') || '{}');
+            existingData.displayName = data.user.displayName || data.user.handle;
+            existingData.email = data.user.email;
+            existingData.handle = data.user.handle;
+            localStorage.setItem('cybermarket_user_data', JSON.stringify(existingData));
+          }
+
+          showStatus('ACCESS GRANTED // ROUTING TO PROFILE...', 'success');
+          CyberApp.showToast('NEURAL TOKEN VALIDATED // WELCOME BACK', 'success');
+
+          setTimeout(() => {
+            window.location.href = 'profile.html';
+          }, 1000);
+
+        } catch (err) {
+          showStatus('Server connection error', 'error');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i data-lucide="power" style="width:16px;height:16px;"></i> Initialize Session';
+          lucide.createIcons();
+        }
+      });
+
+      // Handle Register
+      regForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const handle = document.getElementById('reg-handle').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+        const password = document.getElementById('reg-password').value.trim();
+        const submitBtn = document.getElementById('reg-submit-btn');
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = '$ SAVING TO MONGODB...';
+        hideStatus();
+
+        try {
+          const res = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ handle, email, password })
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            showStatus(data.error || 'Registration failed', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i data-lucide="user-check" style="width:16px;height:16px;"></i> Register Credentials (MongoDB)';
+            lucide.createIcons();
+            return;
+          }
+
+          // Save token & user info
+          localStorage.setItem('cybermarket_auth_token', data.token);
+          if (data.user) {
+            const existingData = JSON.parse(localStorage.getItem('cybermarket_user_data') || '{}');
+            existingData.displayName = data.user.displayName || data.user.handle;
+            existingData.email = data.user.email;
+            existingData.handle = data.user.handle;
+            localStorage.setItem('cybermarket_user_data', JSON.stringify(existingData));
+          }
+
+          showStatus('NETRUNNER REGISTERED // REDIRECTING...', 'success');
+          CyberApp.showToast('CREDENTIALS SAVED TO MONGODB', 'success');
+
+          setTimeout(() => {
+            window.location.href = 'profile.html';
+          }, 1000);
+
+        } catch (err) {
+          showStatus('Server connection error', 'error');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i data-lucide="user-check" style="width:16px;height:16px;"></i> Register Credentials (MongoDB)';
+          lucide.createIcons();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
