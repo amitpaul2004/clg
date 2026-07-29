@@ -428,6 +428,10 @@
   );
 }
 
+.cyber-badge.hidden {
+  display: none !important;
+}
+
 .cyber-badge--secondary {
   border-color: var(--color-accent-secondary);
   color: var(--color-accent-secondary);

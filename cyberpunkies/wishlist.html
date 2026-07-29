@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NEXUS_RUNNER // Profile &amp; Settings — CyberMarket</title>
-  <meta name="description" content="User profile and settings panel for CyberMarket — the underground e-commerce marketplace of the sprawl.">
+  <title>CyberMarket // Products — Black Market Hardware</title>
+  <meta name="description" content="CyberMarket products catalog. Browse hardware, wetware, and data chips.">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -81,11 +81,11 @@
 
     <nav class="cyber-sidebar-nav">
       <div class="cyber-sidebar-section">Main</div>
-      <a href="dashboard.html" class="cyber-sidebar-item cyber-sidebar-item--active" data-page="dashboard">
+      <a href="dashboard.html" class="cyber-sidebar-item" data-page="dashboard">
         <i data-lucide="layout-dashboard" style="width:18px;height:18px;stroke-width:1.5;"></i>
         Dashboard
       </a>
-      <a href="products.html" class="cyber-sidebar-item" data-page="products">
+      <a href="products.html" class="cyber-sidebar-item cyber-sidebar-item--active" data-page="products">
         <i data-lucide="package" style="width:18px;height:18px;stroke-width:1.5;"></i>
         Products
       </a>
@@ -120,127 +120,26 @@
   <main class="cyber-main-content">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
 
-      <!-- ═══════════ PAGE: DASHBOARD ═══════════ -->
-      <div id="page-dashboard" class="cyber-page-view">
-        <div class="flex items-center gap-3 mb-2">
-          <span style="font-family: var(--font-label); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted-foreground);">
-            <span style="color: var(--color-accent);">&gt;</span> sys.user.dashboard
-          </span>
-          <span class="cyber-badge">Online</span>
-        </div>
-        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wider mb-8" style="font-family: var(--font-heading); color: var(--color-foreground);">
-          CyberNet <span style="color: var(--color-accent);">//</span> Dashboard
-        </h1>
-
-        <!-- Metrics Overview Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div class="cyber-card p-6">
-            <div class="flex justify-between items-start mb-2">
-              <span class="cyber-stat-label">System Health</span>
-              <i data-lucide="activity" style="width:16px;height:16px;color:var(--color-accent);"></i>
-            </div>
-            <div class="text-2xl font-bold text-accent" style="font-family: var(--font-heading); color: var(--color-accent);">100% SECURE</div>
-            <div class="w-full bg-[rgba(255,255,255,0.05)] h-1.5 mt-3 rounded-full overflow-hidden">
-              <div class="bg-[var(--color-accent)] h-full" style="width: 100%;"></div>
-            </div>
+      <!-- ═══════════ PAGE: WISHLIST ═══════════ -->
+      <div id="page-wishlist" class="cyber-page-view">
+        <div class="mb-8">
+          <div class="flex items-center gap-3 mb-2">
+            <span style="font-family: var(--font-label); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted-foreground);">
+              <span style="color: var(--color-accent);">&gt;</span> sys.market.wishlist
+            </span>
+            <span class="cyber-badge cyber-badge--secondary">Tracking</span>
           </div>
-
-          <div class="cyber-card p-6">
-            <div class="flex justify-between items-start mb-2">
-              <span class="cyber-stat-label">Neural Sync Rate</span>
-              <i data-lucide="cpu" style="width:16px;height:16px;color:var(--color-accent-tertiary);"></i>
-            </div>
-            <div id="metric-sync-val" class="text-2xl font-bold text-accent" style="font-family: var(--font-heading); color: var(--color-accent-tertiary);">98.4%</div>
-            <div class="w-full bg-[rgba(255,255,255,0.05)] h-1.5 mt-3 rounded-full overflow-hidden">
-              <div id="metric-sync-bar" class="bg-[var(--color-accent-tertiary)] h-full transition-all duration-500" style="width: 98.4%;"></div>
-            </div>
-          </div>
-
-          <div class="cyber-card p-6">
-            <div class="flex justify-between items-start mb-2">
-              <span class="cyber-stat-label">Active Tunnels</span>
-              <i data-lucide="shield" style="width:16px;height:16px;color:var(--color-accent-secondary);"></i>
-            </div>
-            <div id="metric-tunnels-val" class="text-2xl font-bold" style="font-family: var(--font-heading); color: var(--color-accent-secondary);">4 NODES</div>
-            <div class="w-full bg-[rgba(255,255,255,0.05)] h-1.5 mt-3 rounded-full overflow-hidden">
-              <div id="metric-tunnels-bar" class="bg-[var(--color-accent-secondary)] h-full transition-all duration-500" style="width: 75%;"></div>
-            </div>
-          </div>
-
-          <div class="cyber-card p-6">
-            <div class="flex justify-between items-start mb-2">
-              <span class="cyber-stat-label">Latency</span>
-              <i data-lucide="wifi" style="width:16px;height:16px;color:var(--color-foreground);"></i>
-            </div>
-            <div id="metric-latency-val" class="text-2xl font-bold" style="font-family: var(--font-heading); color: var(--color-foreground);">12 MS</div>
-            <div class="w-full bg-[rgba(255,255,255,0.05)] h-1.5 mt-3 rounded-full overflow-hidden">
-              <div id="metric-latency-bar" class="bg-[var(--color-foreground)] h-full transition-all duration-500" style="width: 25%;"></div>
-            </div>
-          </div>
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">
+            Wishlist <span style="color: var(--color-accent);">//</span> Saved Hardware
+          </h1>
         </div>
 
-        <!-- Dashboard Actions & Activity -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div class="cyber-card p-6 lg:col-span-2">
-            <h3 class="text-base font-semibold tracking-wider mb-4" style="font-family: var(--font-heading);">
-              <span style="color: var(--color-accent);">//</span> Real-Time Sprawl Logs
-            </h3>
-            <div class="overflow-x-auto">
-              <table class="cyber-table">
-                <thead>
-                  <tr>
-                    <th>Timestamp</th>
-                    <th>Node Event</th>
-                    <th>IP Location</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="realtime-logs-body">
-                  <tr>
-                    <td>21:45:02</td>
-                    <td>Encrypted Ping Received</td>
-                    <td>192.168.1.104 (Neo-Tokyo)</td>
-                    <td><span class="cyber-badge">SUCCESS</span></td>
-                  </tr>
-                  <tr>
-                    <td>21:42:18</td>
-                    <td>ICE Defense Test Run</td>
-                    <td>Localhost ::1</td>
-                    <td><span class="cyber-badge cyber-badge--tertiary">PASSED</span></td>
-                  </tr>
-                  <tr>
-                    <td>21:38:50</td>
-                    <td>Handshake Authorized</td>
-                    <td>10.0.4.77 (Sector 7G)</td>
-                    <td><span class="cyber-badge">ACTIVE</span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="cyber-card p-6">
-            <h3 class="text-base font-semibold tracking-wider mb-4" style="font-family: var(--font-heading);">
-              <span style="color: var(--color-accent);">//</span> Quick Actions
-            </h3>
-            <div class="flex flex-col gap-3">
-              <button class="cyber-btn cyber-btn--glitch w-full text-left justify-start" onclick="CyberApp.showToast('LAUNCHING MARKETPLACE...', 'info')">
-                <i data-lucide="shopping-bag" style="width:14px;height:14px;"></i>
-                Launch Marketplace
-              </button>
-              <button class="cyber-btn cyber-btn--outline w-full text-left justify-start" onclick="CyberApp.showToast('ICE DEFENSE ACTIVE', 'success')">
-                <i data-lucide="shield-alert" style="width:14px;height:14px;"></i>
-                Deploy ICE Countermeasures
-              </button>
-              <button class="cyber-btn cyber-btn--secondary w-full text-left justify-start" onclick="CyberApp.showToast('LOCAL CACHE PURGED', 'warning')">
-                <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
-                Purge System Logs
-              </button>
-            </div>
-          </div>
+        <!-- Wishlist Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="wishlist-grid">
+          <!-- Dynamic items rendered by wishlist.js -->
         </div>
       </div>
-      <!-- ═══════════ END PAGE: DASHBOARD ═══════════ -->
+      <!-- ═══════════ END PAGE: WISHLIST ═══════════ -->
 
       <!-- ─── FOOTER ─── -->
       <footer class="mt-12 pt-6 border-t border-[var(--color-border)]">
@@ -518,11 +417,11 @@
   <!-- ═══════════ SCRIPTS ═══════════ -->
   <script src="./js/effects.js"></script>
   <script src="./js/app.js"></script>
-  <script src="./js/dashboard.js"></script>
+  <script src="./js/wishlist.js"></script>
   <script>
     // Initialize app with current page
     document.addEventListener('DOMContentLoaded', () => {
-      CyberApp.init('dashboard');
+      CyberApp.init('wishlist');
       lucide.createIcons();
     });
   </script>

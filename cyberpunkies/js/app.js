@@ -9,7 +9,50 @@ const CyberApp = (() => {
   'use strict';
 
   let sidebarOpen = false;
-  let cartTotal = 0;
+  let cartItems = JSON.parse(localStorage.getItem('cyberCart')) || [];
+  let cartTotal = cartItems.reduce((sum, item) => sum + item.qty, 0);
+
+  let wishlistItems = JSON.parse(localStorage.getItem('cyberWishlist')) || [];
+
+  function saveWishlist() {
+    localStorage.setItem('cyberWishlist', JSON.stringify(wishlistItems));
+  }
+
+  function getWishlistItems() {
+    return wishlistItems;
+  }
+  
+  function setWishlistItems(items) {
+    wishlistItems = items;
+    saveWishlist();
+  }
+
+  function saveCart() {
+    localStorage.setItem('cyberCart', JSON.stringify(cartItems));
+    cartTotal = cartItems.reduce((sum, item) => sum + item.qty, 0);
+    updateCartBadge();
+  }
+
+  function getCartItems() {
+    return cartItems;
+  }
+
+  function setCartItems(items) {
+    cartItems = items;
+    saveCart();
+  }
+
+  function updateCartBadge() {
+    const badges = document.querySelectorAll('.cart-badge');
+    badges.forEach(badge => {
+      badge.textContent = cartTotal;
+      if (cartTotal > 0) {
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    });
+  }
 
   /**
    * Toggle sidebar visibility on mobile.
@@ -231,6 +274,10 @@ const CyberApp = (() => {
       setActivePage(currentPage);
     }
 
+    // Init badges
+    updateCartBadge();
+    initWishlistIcons();
+
     // Disconnect flow
     initDisconnect();
 
@@ -245,42 +292,144 @@ const CyberApp = (() => {
     });
   }
 
-  /**
-   * Add to Cart Logic
-   */
   function addToCart(btnElement) {
-    cartTotal++;
-    
-    // Update all cart badges
-    const badges = document.querySelectorAll('.cart-badge');
-    badges.forEach(badge => {
-      badge.textContent = cartTotal;
-      badge.classList.remove('hidden');
-      // Trigger animation
-      badge.style.animation = 'none';
-      badge.offsetHeight;
-      badge.style.animation = 'toast-in 0.3s ease-out';
-    });
+    if (!btnElement) return;
 
-    // Show Toast
+    // Parse product info
+    const card = btnElement.closest('.cyber-card');
+    if (!card) return; // Fail safe
+
+    const title = card.querySelector('h3').textContent;
+    const priceEl = card.querySelector('span[style*="color: var(--color-accent)"]');
+    const priceStr = priceEl ? priceEl.textContent : '0';
+    const price = parseInt(priceStr.replace(/[^0-9]/g, ''), 10);
+    const category = card.dataset.category || 'misc';
+    const img = card.querySelector('img');
+    const imgSrc = img ? img.src : '';
+    const id = title.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+    // Add to storage
+    const existing = cartItems.find(i => i.id === id);
+    if (!existing) {
+      cartItems.push({ id, title, price, category, image: imgSrc, qty: 1 });
+    } else {
+      existing.qty++;
+    }
+    saveCart();
     showToast('ADDED TO CART', 'success');
 
-    // Update Button
-    if (btnElement) {
-      btnElement.innerHTML = '<i data-lucide="check" style="width:14px;height:14px;"></i> ADDED';
-      btnElement.classList.remove('cyber-btn--outline', 'cyber-btn--tertiary', 'cyber-btn--secondary', 'cyber-btn--destructive');
-      btnElement.classList.add('cyber-btn--glitch');
-      btnElement.style.pointerEvents = 'none';
-      btnElement.style.opacity = '0.8';
+    // Trigger badge animation
+    const badges = document.querySelectorAll('.cart-badge');
+    badges.forEach(b => {
+      b.style.animation = 'none';
+      b.offsetHeight;
+      b.style.animation = 'toast-in 0.3s ease-out';
+    });
+
+    const container = btnElement.parentElement;
+    
+    // Create Quantity Selector Wrapper
+    const qtyWrapper = document.createElement('div');
+    qtyWrapper.className = 'flex items-center gap-2';
+    
+    let baseColorClass = 'cyber-btn--glitch';
+    if (btnElement.classList.contains('cyber-btn--tertiary')) baseColorClass = 'cyber-btn--tertiary';
+    if (btnElement.classList.contains('cyber-btn--destructive')) baseColorClass = 'cyber-btn--destructive';
+    if (btnElement.classList.contains('cyber-btn--secondary')) baseColorClass = 'cyber-btn--secondary';
+
+    qtyWrapper.innerHTML = `
+      <button class="cyber-btn cyber-btn--sm ${baseColorClass} qty-minus" style="padding: 0 0.5rem; min-width: 28px;">-</button>
+      <span class="qty-val font-bold text-sm text-center" style="font-family: var(--font-heading); color: var(--color-foreground); width: 24px;">1</span>
+      <button class="cyber-btn cyber-btn--sm ${baseColorClass} qty-plus" style="padding: 0 0.5rem; min-width: 28px;">+</button>
+    `;
+
+    let qty = 1;
+    const minusBtn = qtyWrapper.querySelector('.qty-minus');
+    const plusBtn = qtyWrapper.querySelector('.qty-plus');
+    const valSpan = qtyWrapper.querySelector('.qty-val');
+
+    minusBtn.onclick = (e) => {
+      e.stopPropagation();
+      qty--;
       
-      // Re-initialize lucide icons inside the button
-      if (window.lucide) {
-        window.lucide.createIcons({
-          root: btnElement
-        });
+      if (qty === 0) {
+        cartItems = cartItems.filter(i => i.id !== id);
+        container.replaceChild(btnElement, qtyWrapper);
+      } else {
+        const item = cartItems.find(i => i.id === id);
+        if (item) item.qty = qty;
+        valSpan.textContent = qty;
       }
-    }
+      saveCart();
+    };
+
+    plusBtn.onclick = (e) => {
+      e.stopPropagation();
+      qty++;
+      const item = cartItems.find(i => i.id === id);
+      if (item) item.qty = qty;
+      valSpan.textContent = qty;
+      saveCart();
+    };
+
+    container.replaceChild(qtyWrapper, btnElement);
   }
 
-  return { init, toggleSidebar, closeSidebar, showToast, setActivePage, addToCart };
+  function toggleWishlist(btnElement) {
+    if (!btnElement) return;
+    
+    const card = btnElement.closest('.cyber-card');
+    if (!card) return;
+
+    const title = card.querySelector('h3').textContent;
+    const priceEl = card.querySelector('span[style*="color: var(--color-accent)"]');
+    const priceStr = priceEl ? priceEl.textContent : '0';
+    const price = parseInt(priceStr.replace(/[^0-9]/g, ''), 10);
+    const category = card.dataset.category || 'misc';
+    const img = card.querySelector('img');
+    const imgSrc = img ? img.src : '';
+    const id = title.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+    const icon = btnElement.querySelector('.wishlist-icon');
+    const existingIdx = wishlistItems.findIndex(i => i.id === id);
+
+    if (existingIdx >= 0) {
+      // Remove
+      wishlistItems.splice(existingIdx, 1);
+      if (icon) {
+        icon.style.fill = 'transparent';
+        icon.style.color = 'var(--color-muted-foreground)';
+      }
+      showToast('REMOVED FROM WISHLIST', 'warning');
+    } else {
+      // Add
+      wishlistItems.push({ id, title, price, category, image: imgSrc });
+      if (icon) {
+        icon.style.fill = 'var(--color-destructive)';
+        icon.style.color = 'var(--color-destructive)';
+      }
+      showToast('ADDED TO WISHLIST', 'success');
+    }
+    
+    saveWishlist();
+  }
+
+  function initWishlistIcons() {
+    const btns = document.querySelectorAll('.wishlist-toggle-btn');
+    btns.forEach(btn => {
+      const card = btn.closest('.cyber-card');
+      const title = card.querySelector('h3').textContent;
+      const id = title.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      
+      const icon = btn.querySelector('.wishlist-icon');
+      if (wishlistItems.some(i => i.id === id)) {
+        if (icon) {
+          icon.style.fill = 'var(--color-destructive)';
+          icon.style.color = 'var(--color-destructive)';
+        }
+      }
+    });
+  }
+
+  return { init, toggleSidebar, closeSidebar, showToast, setActivePage, addToCart, getCartItems, setCartItems, updateCartBadge, getWishlistItems, setWishlistItems, toggleWishlist };
 })();

@@ -89,14 +89,14 @@
         <i data-lucide="package" style="width:18px;height:18px;stroke-width:1.5;"></i>
         Products
       </a>
-      <a href="#" class="cyber-sidebar-item flex justify-between items-center" data-page="orders">
+      <a href="cart.html" class="cyber-sidebar-item flex justify-between items-center" data-page="cart">
         <span class="flex items-center" style="gap: 0.75rem;">
           <i data-lucide="shopping-cart" style="width:18px;height:18px;stroke-width:1.5;"></i>
           Cart
         </span>
         <span class="cart-badge cyber-badge cyber-badge--secondary hidden">0</span>
       </a>
-      <a href="#" class="cyber-sidebar-item" data-page="wishlist">
+      <a href="wishlist.html" class="cyber-sidebar-item" data-page="wishlist">
         <i data-lucide="heart" style="width:18px;height:18px;stroke-width:1.5;"></i>
         Wishlist
       </a>
@@ -163,6 +163,9 @@
           <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent)] transition-all duration-300 product-item" data-category="hardware">
             <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
               <img src="./assets/product_neural_deck_1785343367150.png" alt="Kuro-Tech Phantom Deck" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <button class="absolute top-2 left-2 p-1.5 rounded-full bg-[rgba(10,10,15,0.7)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors wishlist-toggle-btn z-10" title="Toggle Wishlist" onclick="CyberApp.toggleWishlist(this)">
+                <i data-lucide="heart" class="wishlist-icon" style="width:16px;height:16px;color:var(--color-muted-foreground);transition:all 0.3s;"></i>
+              </button>
               <div class="absolute top-2 right-2">
                 <span class="cyber-badge">IN STOCK</span>
               </div>
@@ -170,7 +173,7 @@
             <div class="p-5 flex flex-col flex-1">
               <div class="flex justify-between items-start mb-2">
                 <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Phantom Deck v4</h3>
-                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 12,500</span>
+                <span class="whitespace-nowrap ml-2" style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 12,500</span>
               </div>
               <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Military-grade neural interface. Bypasses standard ICE protocols in 0.4s.</p>
               
@@ -187,6 +190,9 @@
           <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent-secondary)] transition-all duration-300 product-item" data-category="hardware">
             <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
               <img src="./assets/product_neural_deck_2_1785343669798.png" alt="Wasteland Deck" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <button class="absolute top-2 left-2 p-1.5 rounded-full bg-[rgba(10,10,15,0.7)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors wishlist-toggle-btn z-10" title="Toggle Wishlist" onclick="CyberApp.toggleWishlist(this)">
+                <i data-lucide="heart" class="wishlist-icon" style="width:16px;height:16px;color:var(--color-muted-foreground);transition:all 0.3s;"></i>
+              </button>
               <div class="absolute top-2 right-2">
                 <span class="cyber-badge cyber-badge--secondary">REFURBISHED</span>
               </div>
@@ -194,7 +200,7 @@
             <div class="p-5 flex flex-col flex-1">
               <div class="flex justify-between items-start mb-2">
                 <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Scrap Deck Mk.I</h3>
-                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 3,400</span>
+                <span class="whitespace-nowrap ml-2" style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 3,400</span>
               </div>
               <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Barebones cyberdeck. Might catch fire. Might fry a corp node. Roll the dice.</p>
               
@@ -211,6 +217,9 @@
           <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent-tertiary)] transition-all duration-300 product-item" data-category="wetware">
             <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
               <img src="./assets/product_cyber_eye_1785343377884.png" alt="Kiroshi Optics Mk.III" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <button class="absolute top-2 left-2 p-1.5 rounded-full bg-[rgba(10,10,15,0.7)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors wishlist-toggle-btn z-10" title="Toggle Wishlist" onclick="CyberApp.toggleWishlist(this)">
+                <i data-lucide="heart" class="wishlist-icon" style="width:16px;height:16px;color:var(--color-muted-foreground);transition:all 0.3s;"></i>
+              </button>
               <div class="absolute top-2 right-2">
                 <span class="cyber-badge cyber-badge--tertiary">LEGENDARY</span>
               </div>
@@ -218,7 +227,7 @@
             <div class="p-5 flex flex-col flex-1">
               <div class="flex justify-between items-start mb-2">
                 <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Optics Mk.III</h3>
-                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 45,000</span>
+                <span class="whitespace-nowrap ml-2" style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 45,000</span>
               </div>
               <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Advanced optical implant with built-in thermal and EM spectrum analysis.</p>
               
@@ -235,6 +244,9 @@
           <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-destructive)] transition-all duration-300 product-item" data-category="wetware">
             <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
               <img src="./assets/product_wetware_2_1785343680406.png" alt="Gorilla Synthetic Muscle" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <button class="absolute top-2 left-2 p-1.5 rounded-full bg-[rgba(10,10,15,0.7)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors wishlist-toggle-btn z-10" title="Toggle Wishlist" onclick="CyberApp.toggleWishlist(this)">
+                <i data-lucide="heart" class="wishlist-icon" style="width:16px;height:16px;color:var(--color-muted-foreground);transition:all 0.3s;"></i>
+              </button>
               <div class="absolute top-2 right-2">
                 <span class="cyber-badge cyber-badge--destructive">RESTRICTED</span>
               </div>
@@ -242,7 +254,7 @@
             <div class="p-5 flex flex-col flex-1">
               <div class="flex justify-between items-start mb-2">
                 <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Syn-Muscle Weave</h3>
-                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 28,000</span>
+                <span class="whitespace-nowrap ml-2" style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 28,000</span>
               </div>
               <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Biomechanical fiber replacements. Capable of bending mild steel.</p>
               
@@ -259,6 +271,9 @@
           <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent)] transition-all duration-300 product-item" data-category="software">
             <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
               <img src="./assets/product_data_chip_1785343389468.png" alt="Daemons Decryption Suite" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <button class="absolute top-2 left-2 p-1.5 rounded-full bg-[rgba(10,10,15,0.7)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors wishlist-toggle-btn z-10" title="Toggle Wishlist" onclick="CyberApp.toggleWishlist(this)">
+                <i data-lucide="heart" class="wishlist-icon" style="width:16px;height:16px;color:var(--color-muted-foreground);transition:all 0.3s;"></i>
+              </button>
               <div class="absolute top-2 right-2">
                 <span class="cyber-badge cyber-badge--secondary">ILLEGAL</span>
               </div>
@@ -266,7 +281,7 @@
             <div class="p-5 flex flex-col flex-1">
               <div class="flex justify-between items-start mb-2">
                 <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Daemon Suite</h3>
-                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 8,200</span>
+                <span class="whitespace-nowrap ml-2" style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 8,200</span>
               </div>
               <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Self-mutating decryption algorithm. Highly illegal in 12 sectors.</p>
               
@@ -283,6 +298,9 @@
           <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent-tertiary)] transition-all duration-300 product-item" data-category="armaments">
             <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
               <img src="./assets/product_weapon_1_1785343692209.png" alt="Overture Power Pistol" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <button class="absolute top-2 left-2 p-1.5 rounded-full bg-[rgba(10,10,15,0.7)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors wishlist-toggle-btn z-10" title="Toggle Wishlist" onclick="CyberApp.toggleWishlist(this)">
+                <i data-lucide="heart" class="wishlist-icon" style="width:16px;height:16px;color:var(--color-muted-foreground);transition:all 0.3s;"></i>
+              </button>
               <div class="absolute top-2 right-2">
                 <span class="cyber-badge">IN STOCK</span>
               </div>
@@ -290,7 +308,7 @@
             <div class="p-5 flex flex-col flex-1">
               <div class="flex justify-between items-start mb-2">
                 <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Lexington 9mm</h3>
-                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 4,500</span>
+                <span class="whitespace-nowrap ml-2" style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 4,500</span>
               </div>
               <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Reliable polymer handgun with smart-link capability and cyan tracers.</p>
               
@@ -307,6 +325,9 @@
           <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-destructive)] transition-all duration-300 product-item" data-category="armaments">
             <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
               <img src="./assets/product_weapon_2_1785343705040.png" alt="Monomolecular Katana" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <button class="absolute top-2 left-2 p-1.5 rounded-full bg-[rgba(10,10,15,0.7)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors wishlist-toggle-btn z-10" title="Toggle Wishlist" onclick="CyberApp.toggleWishlist(this)">
+                <i data-lucide="heart" class="wishlist-icon" style="width:16px;height:16px;color:var(--color-muted-foreground);transition:all 0.3s;"></i>
+              </button>
               <div class="absolute top-2 right-2">
                 <span class="cyber-badge cyber-badge--secondary">RARE</span>
               </div>
@@ -314,7 +335,7 @@
             <div class="p-5 flex flex-col flex-1">
               <div class="flex justify-between items-start mb-2">
                 <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Mono-Katana</h3>
-                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 88,000</span>
+                <span class="whitespace-nowrap ml-2" style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 88,000</span>
               </div>
               <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Blade sharpened to a single molecule. Slices through armor like butter.</p>
               
@@ -331,6 +352,9 @@
           <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent-tertiary)] transition-all duration-300 product-item" data-category="wetware">
             <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
               <img src="./assets/product_cyber_arm_1785343983594.png" alt="Prosthetic Arm" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <button class="absolute top-2 left-2 p-1.5 rounded-full bg-[rgba(10,10,15,0.7)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors wishlist-toggle-btn z-10" title="Toggle Wishlist" onclick="CyberApp.toggleWishlist(this)">
+                <i data-lucide="heart" class="wishlist-icon" style="width:16px;height:16px;color:var(--color-muted-foreground);transition:all 0.3s;"></i>
+              </button>
               <div class="absolute top-2 right-2">
                 <span class="cyber-badge cyber-badge--tertiary">PREMIUM</span>
               </div>
@@ -338,7 +362,7 @@
             <div class="p-5 flex flex-col flex-1">
               <div class="flex justify-between items-start mb-2">
                 <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Titanium Arm</h3>
-                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 62,500</span>
+                <span class="whitespace-nowrap ml-2" style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 62,500</span>
               </div>
               <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Military surplus cybernetic limb with hidden compartmental storage and enhanced grip.</p>
               
@@ -355,6 +379,9 @@
           <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent)] transition-all duration-300 product-item" data-category="software">
             <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
               <img src="./assets/product_software_2_1785343994334.png" alt="AI Defense Core" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <button class="absolute top-2 left-2 p-1.5 rounded-full bg-[rgba(10,10,15,0.7)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors wishlist-toggle-btn z-10" title="Toggle Wishlist" onclick="CyberApp.toggleWishlist(this)">
+                <i data-lucide="heart" class="wishlist-icon" style="width:16px;height:16px;color:var(--color-muted-foreground);transition:all 0.3s;"></i>
+              </button>
               <div class="absolute top-2 right-2">
                 <span class="cyber-badge">IN STOCK</span>
               </div>
@@ -362,7 +389,7 @@
             <div class="p-5 flex flex-col flex-1">
               <div class="flex justify-between items-start mb-2">
                 <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Vanguard AI</h3>
-                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 18,000</span>
+                <span class="whitespace-nowrap ml-2" style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 18,000</span>
               </div>
               <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Adaptive intelligence core. Learns intrusion patterns and counters them in real-time.</p>
               
@@ -379,6 +406,9 @@
           <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent-tertiary)] transition-all duration-300 product-item" data-category="hardware">
             <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
               <img src="./assets/product_drone_1_1785344102075.png" alt="Cyber Drone Companion" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <button class="absolute top-2 left-2 p-1.5 rounded-full bg-[rgba(10,10,15,0.7)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors wishlist-toggle-btn z-10" title="Toggle Wishlist" onclick="CyberApp.toggleWishlist(this)">
+                <i data-lucide="heart" class="wishlist-icon" style="width:16px;height:16px;color:var(--color-muted-foreground);transition:all 0.3s;"></i>
+              </button>
               <div class="absolute top-2 right-2">
                 <span class="cyber-badge cyber-badge--tertiary">PREMIUM</span>
               </div>
@@ -386,7 +416,7 @@
             <div class="p-5 flex flex-col flex-1">
               <div class="flex justify-between items-start mb-2">
                 <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Specter Drone</h3>
-                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 32,000</span>
+                <span class="whitespace-nowrap ml-2" style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 32,000</span>
               </div>
               <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Autonomous reconnaissance companion. Silent hovering with EMP shielding.</p>
               
@@ -403,6 +433,9 @@
           <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent)] transition-all duration-300 product-item" data-category="hardware">
             <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
               <img src="./assets/product_holo_1_1785344114810.png" alt="Holo Emitter Puck" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <button class="absolute top-2 left-2 p-1.5 rounded-full bg-[rgba(10,10,15,0.7)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors wishlist-toggle-btn z-10" title="Toggle Wishlist" onclick="CyberApp.toggleWishlist(this)">
+                <i data-lucide="heart" class="wishlist-icon" style="width:16px;height:16px;color:var(--color-muted-foreground);transition:all 0.3s;"></i>
+              </button>
               <div class="absolute top-2 right-2">
                 <span class="cyber-badge">IN STOCK</span>
               </div>
@@ -410,7 +443,7 @@
             <div class="p-5 flex flex-col flex-1">
               <div class="flex justify-between items-start mb-2">
                 <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Mirage Emitter</h3>
-                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 5,400</span>
+                <span class="whitespace-nowrap ml-2" style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 5,400</span>
               </div>
               <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Portable holographic decoy projector. Confuses basic optical sensors.</p>
               
@@ -427,6 +460,9 @@
           <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-destructive)] transition-all duration-300 product-item" data-category="wetware">
             <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
               <img src="./assets/product_stim_1_1785344127060.png" alt="Combat Stim Injector" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <button class="absolute top-2 left-2 p-1.5 rounded-full bg-[rgba(10,10,15,0.7)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors wishlist-toggle-btn z-10" title="Toggle Wishlist" onclick="CyberApp.toggleWishlist(this)">
+                <i data-lucide="heart" class="wishlist-icon" style="width:16px;height:16px;color:var(--color-muted-foreground);transition:all 0.3s;"></i>
+              </button>
               <div class="absolute top-2 right-2">
                 <span class="cyber-badge cyber-badge--secondary">RESTRICTED</span>
               </div>
@@ -434,7 +470,7 @@
             <div class="p-5 flex flex-col flex-1">
               <div class="flex justify-between items-start mb-2">
                 <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Adrenal Stim-Pack</h3>
-                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 1,200</span>
+                <span class="whitespace-nowrap ml-2" style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 1,200</span>
               </div>
               <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Military grade combat stimulant. +50% reaction time for 120 seconds. Highly addictive.</p>
               
@@ -731,7 +767,7 @@
   <script>
     // Initialize app with current page
     document.addEventListener('DOMContentLoaded', () => {
-      CyberApp.init('dashboard');
+      CyberApp.init('products');
       lucide.createIcons();
     });
   </script>
