@@ -136,11 +136,12 @@
             <!-- Avatar -->
             <div class="relative flex-shrink-0">
               <div class="cyber-avatar cyber-avatar--lg">
-                <img src="./assets/avatar.png" alt="User avatar" width="96" height="96">
+                <img id="profile-avatar-img" src="./assets/avatar.png" alt="User avatar" width="96" height="96">
               </div>
-              <button class="cyber-btn cyber-btn--sm cyber-btn--ghost absolute -bottom-2 -right-2" title="Change avatar" style="padding:0.25rem; min-height:28px; width:28px; font-size:0.75rem;">
+              <button id="change-avatar-btn" class="cyber-btn cyber-btn--sm cyber-btn--ghost absolute -bottom-2 -right-2" title="Change avatar" style="padding:0.25rem; min-height:28px; width:28px; font-size:0.75rem;">
                 <i data-lucide="camera" style="width:14px;height:14px;stroke-width:1.5;"></i>
               </button>
+              <input type="file" id="avatar-upload-input" accept="image/*" class="hidden" style="display:none;">
             </div>
 
             <!-- User Info -->

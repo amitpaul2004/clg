@@ -58,7 +58,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'cyberpunk_neural_link_secret_key_2
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname)));
 
 // ── MongoDB Connection ─────────────────────────────────
@@ -83,6 +84,7 @@ const UserSchema = new mongoose.Schema({
   bio: { type: String, default: 'Rogue netrunner. Data liberation specialist. The sprawl is my playground.' },
   location: { type: String, default: 'Neo-Tokyo, Sector 7G' },
   website: { type: String, default: 'https://nexus-runner.darknet.io' },
+  avatar: { type: String, default: './assets/avatar.png' },
   notifications: {
     orderUpdates: { type: Boolean, default: true },
     priceDrops: { type: Boolean, default: true },
@@ -609,6 +611,33 @@ app.put('/api/user/notifications', async (req, res) => {
     }
   } catch (err) {
     res.status(500).json({ error: 'Failed to update notifications' });
+  }
+});
+
+// 9b. Update Avatar
+app.put('/api/user/avatar', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    const { avatar } = req.body;
+    if (!avatar) return res.status(400).json({ error: 'Avatar data is required' });
+
+    if (isMongoConnected) {
+      const user = await User.findByIdAndUpdate(
+        decoded.id,
+        { avatar },
+        { new: true }
+      ).select('-passwordHash');
+      return res.json({ message: 'Avatar updated in MongoDB', avatar: user.avatar });
+    } else {
+      return res.json({ message: 'Avatar updated', avatar });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update avatar' });
   }
 });
 

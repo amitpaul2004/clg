@@ -806,12 +806,14 @@ const CyberProfile = (() => {
     const locationInput = document.getElementById('location');
     const websiteInput = document.getElementById('website');
     const bioInput = document.getElementById('bio');
+    const avatarImg = document.getElementById('profile-avatar-img');
 
     if (nameInput) nameInput.value = userData.displayName || '';
     if (emailInput) emailInput.value = userData.email || '';
     if (locationInput) locationInput.value = userData.location || '';
     if (websiteInput) websiteInput.value = userData.website || '';
     if (bioInput) bioInput.value = userData.bio || '';
+    if (avatarImg && userData.avatar) avatarImg.src = userData.avatar;
 
     // Notification Toggles & Dropdowns
     if (userData.notifications) {
@@ -1081,6 +1083,64 @@ const CyberProfile = (() => {
   }
 
   /**
+   * Initialize avatar upload logic.
+   */
+  function initAvatarUpload() {
+    const changeBtn = document.getElementById('change-avatar-btn');
+    const fileInput = document.getElementById('avatar-upload-input');
+    const avatarImg = document.getElementById('profile-avatar-img');
+
+    if (changeBtn && fileInput && avatarImg) {
+      changeBtn.addEventListener('click', () => {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          changeBtn.innerHTML = '<i data-lucide="loader" class="animate-spin" style="width:14px;height:14px;"></i>';
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+          
+          const reader = new FileReader();
+          reader.onload = async (e) => {
+            const base64Avatar = e.target.result;
+            avatarImg.src = base64Avatar;
+            userData.avatar = base64Avatar;
+            saveLocalCache();
+
+            const token = localStorage.getItem('cybermarket_auth_token');
+            if (token) {
+              try {
+                const resp = await fetch(`${API_BASE}/api/user/avatar`, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                  body: JSON.stringify({ avatar: base64Avatar })
+                });
+                
+                if (!resp.ok) {
+                  const errData = await resp.json().catch(() => ({}));
+                  throw new Error(errData.error || 'Server returned ' + resp.status);
+                }
+                
+                CyberApp.showToast('AVATAR SAVED TO MONGODB', 'success');
+              } catch (err) {
+                console.error("Avatar Upload Error:", err);
+                CyberApp.showToast('FAILED: ' + err.message, 'error');
+              }
+            } else {
+              CyberApp.showToast('AVATAR SAVED LOCALLY', 'success');
+            }
+            
+            changeBtn.innerHTML = '<i data-lucide="camera" style="width:14px;height:14px;stroke-width:1.5;"></i>';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  }
+
+  /**
    * Initialize profile page.
    */
   function init() {
@@ -1091,6 +1151,7 @@ const CyberProfile = (() => {
     initPasswordForm();
     initSessionActions();
     initModals();
+    initAvatarUpload();
   }
 
   return { init, userData };
