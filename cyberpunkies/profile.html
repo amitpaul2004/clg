@@ -387,62 +387,14 @@
                   <th></th>
                 </tr>
               </thead>
-              <tbody>
-                <tr class="current-session">
-                  <td>
-                    <div class="flex items-center gap-2">
-                      <i data-lucide="monitor" style="width:14px;height:14px;stroke-width:1.5;color:var(--color-accent);"></i>
-                      Chrome / Windows 11
-                    </div>
-                  </td>
-                  <td>Neo-Tokyo</td>
-                  <td style="font-family:var(--font-label); font-size:0.75rem;">192.168.1.xxx</td>
-                  <td>
-                    <span class="flex items-center gap-1.5">
-                      <span class="cyber-notification-dot"></span>
-                      Now
-                    </span>
-                  </td>
-                  <td><span class="cyber-badge">Current</span></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="flex items-center gap-2">
-                      <i data-lucide="monitor" style="width:14px;height:14px;stroke-width:1.5;color:var(--color-muted-foreground);"></i>
-                      Firefox / Linux
-                    </div>
-                  </td>
-                  <td>Sector 9K</td>
-                  <td style="font-family:var(--font-label); font-size:0.75rem;">10.0.42.xxx</td>
-                  <td>3 hours ago</td>
-                  <td>
-                    <button class="cyber-btn cyber-btn--sm cyber-btn--outline" data-action="terminate-session" style="padding:0.25rem 0.625rem; min-height: 28px;">
-                      Revoke
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="flex items-center gap-2">
-                      <i data-lucide="smartphone" style="width:14px;height:14px;stroke-width:1.5;color:var(--color-muted-foreground);"></i>
-                      Mobile / Android
-                    </div>
-                  </td>
-                  <td>The Sprawl</td>
-                  <td style="font-family:var(--font-label); font-size:0.75rem;">172.16.0.xxx</td>
-                  <td>1 day ago</td>
-                  <td>
-                    <button class="cyber-btn cyber-btn--sm cyber-btn--outline" data-action="terminate-session" style="padding:0.25rem 0.625rem; min-height: 28px;">
-                      Revoke
-                    </button>
-                  </td>
-                </tr>
+              <tbody id="sessions-body">
+                <!-- Dynamically populated via profile.js -->
               </tbody>
             </table>
           </div>
 
           <div class="flex justify-end mt-6">
-            <button id="terminate-all-sessions" class="cyber-btn cyber-btn--destructive cyber-btn--sm">
+            <button id="terminate-all-btn" class="cyber-btn cyber-btn--destructive cyber-btn--sm">
               <i data-lucide="skull" style="width:14px;height:14px;stroke-width:1.5;"></i>
               Terminate All Others
             </button>
@@ -569,10 +521,10 @@
             </div>
           </div>
 
-          <div class="flex justify-end mt-6">
-            <button class="cyber-btn cyber-btn--glitch" data-action="save">
+          <div class="flex justify-end" style="margin-top: 2.5rem; padding-top: 1.5rem;">
+            <button id="save-notifications-btn" class="cyber-btn cyber-btn--glitch flex items-center gap-2" data-action="save">
               <i data-lucide="save" style="width:14px;height:14px;stroke-width:1.5;"></i>
-              Save Preferences
+              <span>Save Preferences</span>
             </button>
           </div>
         </div>
@@ -587,44 +539,8 @@
             <span style="color: var(--color-accent);">//</span> Payment Methods
           </h3>
 
-          <div class="flex flex-wrap gap-4">
-            <!-- Visa Card -->
-            <div class="cyber-payment-card">
-              <div class="flex justify-between items-start">
-                <span style="font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-foreground);">VISA</span>
-                <span class="cyber-badge">Primary</span>
-              </div>
-              <div class="cyber-payment-card-number">•••• •••• •••• 4242</div>
-              <div class="flex justify-between items-end">
-                <div>
-                  <div class="cyber-payment-card-label">Card Holder</div>
-                  <div class="cyber-payment-card-value">NEXUS RUNNER</div>
-                </div>
-                <div>
-                  <div class="cyber-payment-card-label">Expires</div>
-                  <div class="cyber-payment-card-value">09/27</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Crypto Wallet -->
-            <div class="cyber-payment-card" style="border-color: var(--color-accent-secondary);">
-              <div class="flex justify-between items-start">
-                <span style="font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-accent-secondary);">CRYPTO</span>
-                <span class="cyber-badge cyber-badge--secondary">Wallet</span>
-              </div>
-              <div class="cyber-payment-card-number" style="font-size:0.8125rem;">WALLET_0x7f...3a2e</div>
-              <div class="flex justify-between items-end">
-                <div>
-                  <div class="cyber-payment-card-label">Network</div>
-                  <div class="cyber-payment-card-value">ETH Mainnet</div>
-                </div>
-                <div>
-                  <div class="cyber-payment-card-label">Status</div>
-                  <div class="cyber-payment-card-value" style="color: var(--color-accent);">Active</div>
-                </div>
-              </div>
-            </div>
+          <div id="payment-methods-container" class="flex flex-wrap gap-4">
+            <!-- Payment Methods will be dynamically rendered here by JavaScript -->
           </div>
 
           <div class="mt-4">

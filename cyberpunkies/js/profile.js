@@ -470,41 +470,46 @@ const CyberProfile = (() => {
         const last4 = identifier.slice(-4) || '9988';
         const cardObj = { type, last4, expiry, name: holder, primary: false };
 
-        userData.billing.cards.push(cardObj);
-        saveLocalCache();
+        const submitBtn = paymentForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i data-lucide="loader" class="animate-spin" style="width:14px;height:14px;"></i> SAVING...';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
 
-        // Dynamically insert new payment card element
-        const cardContainer = document.querySelector('#tab-billing .flex.flex-wrap.gap-4');
-        if (cardContainer) {
-          const isCrypto = type === 'CRYPTO';
-          const cardHtml = document.createElement('div');
-          cardHtml.className = 'cyber-payment-card';
-          if (isCrypto) cardHtml.style.borderColor = 'var(--color-accent-secondary)';
-
-          cardHtml.innerHTML = `
-            <div class="flex justify-between items-start">
-              <span style="font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: ${isCrypto ? 'var(--color-accent-secondary)' : 'var(--color-foreground)'};">${type}</span>
-              <span class="cyber-badge cyber-badge--tertiary">New</span>
-            </div>
-            <div class="cyber-payment-card-number" style="${isCrypto ? 'font-size:0.8125rem;' : ''}">${identifier}</div>
-            <div class="flex justify-between items-end">
-              <div>
-                <div class="cyber-payment-card-label">Holder</div>
-                <div class="cyber-payment-card-value">${holder}</div>
-              </div>
-              <div>
-                <div class="cyber-payment-card-label">Expires</div>
-                <div class="cyber-payment-card-value">${expiry}</div>
-              </div>
-            </div>
-          `;
-          cardContainer.appendChild(cardHtml);
+        const token = localStorage.getItem('cybermarket_auth_token');
+        if (token) {
+          fetch(`${API_BASE}/api/user/billing/cards`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+            body: JSON.stringify(cardObj)
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.cards) {
+              userData.billing.cards = data.cards;
+              saveLocalCache();
+              renderPaymentMethods(userData.billing.cards);
+            }
+          })
+          .catch(() => CyberApp.showToast('Failed to add payment method to MongoDB', 'error'))
+          .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+            paymentModal.classList.add('hidden');
+            paymentForm.reset();
+            CyberApp.showToast('PAYMENT METHOD ADDED TO ACCOUNT', 'success');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
+        } else {
+          userData.billing.cards.push(cardObj);
+          saveLocalCache();
+          renderPaymentMethods(userData.billing.cards);
+          
+          paymentModal.classList.add('hidden');
+          paymentForm.reset();
+          CyberApp.showToast('PAYMENT METHOD ADDED (LOCAL)', 'success');
         }
 
-        paymentModal.classList.add('hidden');
-        paymentForm.reset();
-        CyberApp.showToast('PAYMENT METHOD ADDED TO ACCOUNT', 'success');
-        if (typeof lucide !== 'undefined') lucide.createIcons();
       });
     }
 
@@ -848,6 +853,11 @@ const CyberProfile = (() => {
       if (cityInput) cityInput.value = userData.billing.address.city || '';
       if (zipInput) zipInput.value = userData.billing.address.zip || '';
     }
+    
+    // Payment Methods
+    if (userData.billing?.cards) {
+      renderPaymentMethods(userData.billing.cards);
+    }
 
     // Transactions Table
     const tbody = document.getElementById('transactions-body');
@@ -869,6 +879,129 @@ const CyberProfile = (() => {
     // Linked Accounts from MongoDB
     if (userData.linkedAccounts) {
       renderLinkedAccounts(userData.linkedAccounts);
+    }
+    
+    // Active Sessions from MongoDB
+    if (userData.activeSessions) {
+      renderSessions(userData.activeSessions);
+    }
+  }
+
+  /**
+   * Helper for relative time
+   */
+  function timeAgo(dateStr) {
+    if (!dateStr) return 'Now';
+    const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
+    if (seconds < 60) return 'Now';
+    const intervals = { year: 31536000, month: 2592000, day: 86400, hour: 3600, minute: 60 };
+    for (const [unit, secs] of Object.entries(intervals)) {
+      const i = Math.floor(seconds / secs);
+      if (i >= 1) return `${i} ${unit}${i > 1 ? 's' : ''} ago`;
+    }
+    return 'Now';
+  }
+
+  /**
+   * Render dynamic active sessions table and attach revoke events.
+   */
+  function renderSessions(sessions) {
+    const tbody = document.getElementById('sessions-body');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    sessions.forEach(session => {
+      const tr = document.createElement('tr');
+      if (session.isCurrent) tr.className = 'current-session';
+      
+      tr.innerHTML = `
+        <td>
+          <div class="flex items-center gap-2">
+            <i data-lucide="${session.icon || 'monitor'}" style="width:14px;height:14px;stroke-width:1.5;color:var(--color-${session.isCurrent ? 'accent' : 'muted-foreground'});"></i>
+            ${session.device}
+          </div>
+        </td>
+        <td>${session.location}</td>
+        <td style="font-family:var(--font-label); font-size:0.75rem;">${session.ip}</td>
+        <td>
+          ${session.isCurrent ? `
+          <span class="flex items-center gap-1.5">
+            <span class="cyber-notification-dot"></span>
+            Now
+          </span>
+          ` : timeAgo(session.lastActive)}
+        </td>
+        <td>
+          ${session.isCurrent 
+            ? `<span class="cyber-badge">Current</span>`
+            : `<button class="cyber-btn cyber-btn--sm cyber-btn--outline revoke-btn" data-id="${session._id}" style="padding:0.25rem 0.625rem; min-height: 28px;">Revoke</button>`
+          }
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    // Revoke Individual Session
+    document.querySelectorAll('.revoke-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const sessionId = btn.getAttribute('data-id');
+        const token = localStorage.getItem('cybermarket_auth_token');
+        
+        btn.innerHTML = '<i data-lucide="loader" class="animate-spin" style="width:14px;height:14px;"></i>';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        
+        try {
+          const resp = await fetch(`${API_BASE}/api/user/sessions/${sessionId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (resp.ok) {
+            const data = await resp.json();
+            userData.activeSessions = data.activeSessions;
+            saveLocalCache();
+            renderSessions(userData.activeSessions);
+            CyberApp.showToast('SESSION TERMINATED', 'success');
+          }
+        } catch (err) {
+          CyberApp.showToast('FAILED TO TERMINATE SESSION', 'error');
+        }
+      });
+    });
+
+    // Terminate All Others
+    const terminateAllBtn = document.getElementById('terminate-all-btn');
+    if (terminateAllBtn) {
+      // Remove old listeners by cloning
+      const newBtn = terminateAllBtn.cloneNode(true);
+      terminateAllBtn.parentNode.replaceChild(newBtn, terminateAllBtn);
+      
+      newBtn.addEventListener('click', async () => {
+        const token = localStorage.getItem('cybermarket_auth_token');
+        newBtn.innerHTML = '<i data-lucide="loader" class="animate-spin" style="width:14px;height:14px;"></i> TERMINATING...';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        
+        try {
+          const resp = await fetch(`${API_BASE}/api/user/sessions`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (resp.ok) {
+            const data = await resp.json();
+            userData.activeSessions = data.activeSessions;
+            saveLocalCache();
+            renderSessions(userData.activeSessions);
+            CyberApp.showToast('ALL OTHER SESSIONS TERMINATED', 'success');
+          }
+        } catch (err) {
+          CyberApp.showToast('FAILED TO TERMINATE SESSIONS', 'error');
+        } finally {
+          newBtn.innerHTML = '<i data-lucide="skull" style="width:14px;height:14px;stroke-width:1.5;"></i> Terminate All Others';
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+      });
     }
   }
 
@@ -961,6 +1094,44 @@ const CyberProfile = (() => {
   }
 
   return { init, userData };
+
+  /**
+   * Render dynamic payment methods cards.
+   */
+  function renderPaymentMethods(cards) {
+    const container = document.getElementById('payment-methods-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+    
+    cards.forEach(card => {
+      const isCrypto = card.type === 'CRYPTO';
+      const div = document.createElement('div');
+      div.className = 'cyber-payment-card';
+      if (isCrypto) div.style.borderColor = 'var(--color-accent-secondary)';
+
+      div.innerHTML = `
+        <div class="flex justify-between items-start">
+          <span style="font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: ${isCrypto ? 'var(--color-accent-secondary)' : 'var(--color-foreground)'};">${card.type}</span>
+          ${card.primary ? '<span class="cyber-badge">Primary</span>' : (isCrypto ? '<span class="cyber-badge cyber-badge--secondary">Wallet</span>' : '<span class="cyber-badge cyber-badge--tertiary">Active</span>')}
+        </div>
+        <div class="cyber-payment-card-number" style="${isCrypto ? 'font-size:0.8125rem;' : ''}">
+          ${isCrypto ? 'WALLET_0x...' + card.last4 : '•••• •••• •••• ' + card.last4}
+        </div>
+        <div class="flex justify-between items-end">
+          <div>
+            <div class="cyber-payment-card-label">${isCrypto ? 'Network' : 'Card Holder'}</div>
+            <div class="cyber-payment-card-value">${isCrypto ? 'ETH Mainnet' : card.name}</div>
+          </div>
+          <div>
+            <div class="cyber-payment-card-label">${isCrypto ? 'Status' : 'Expires'}</div>
+            <div class="cyber-payment-card-value" style="${isCrypto ? 'color: var(--color-accent);' : ''}">${isCrypto ? 'Active' : card.expiry}</div>
+          </div>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  }
 })();
 
 // Initialize when DOM is ready

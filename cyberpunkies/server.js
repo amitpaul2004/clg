@@ -103,7 +103,21 @@ const UserSchema = new mongoose.Schema({
       street: { type: String, default: 'Block 7G, Neon Heights Tower' },
       city: { type: String, default: 'Neo-Tokyo' },
       zip: { type: String, default: 'NT-77042' }
-    }
+    },
+    cards: [{
+      type: { type: String, required: true },
+      last4: { type: String, required: true },
+      expiry: { type: String, required: true },
+      name: { type: String, required: true },
+      primary: { type: Boolean, default: false }
+    }],
+    transactions: [{
+      id: { type: String, required: true },
+      date: { type: String, required: true },
+      item: { type: String, required: true },
+      amount: { type: String, required: true },
+      status: { type: String, required: true }
+    }]
   },
   linkedAccounts: [{
     platform: { type: String, required: true },
@@ -274,12 +288,51 @@ app.get('/api/user/profile', async (req, res) => {
       const user = await User.findById(decoded.id).select('-passwordHash');
       if (!user) return res.status(404).json({ error: 'User not found' });
       
-      // Inject mock active sessions if array is empty (for prototype purposes)
+      // Inject real active session if array is empty
       if (!user.activeSessions || user.activeSessions.length === 0) {
-        user.activeSessions = [
-          { device: 'Chrome / Windows 11', location: 'Neo-Tokyo', ip: '192.168.1.144', isCurrent: true, icon: 'monitor' },
-          { device: 'Firefox / Linux', location: 'Sector 9K', ip: '10.0.42.112', isCurrent: false, icon: 'monitor', lastActive: new Date(Date.now() - 3 * 60 * 60 * 1000) },
-          { device: 'Mobile / Android', location: 'The Sprawl', ip: '172.16.0.45', isCurrent: false, icon: 'smartphone', lastActive: new Date(Date.now() - 24 * 60 * 60 * 1000) }
+        const userAgent = req.headers['user-agent'] || 'Unknown Device';
+        let deviceName = 'Desktop Browser';
+        let icon = 'monitor';
+        
+        if (userAgent.toLowerCase().includes('mobile') || userAgent.toLowerCase().includes('android') || userAgent.toLowerCase().includes('iphone')) {
+          deviceName = 'Mobile Browser';
+          icon = 'smartphone';
+        }
+
+        let finalIp = req.ip || req.connection.remoteAddress || '127.0.0.1';
+        let geoLoc = 'Unknown Location';
+        
+        try {
+          // If localhost, fetch public IP of the machine for testing purposes
+          const fetchIp = (finalIp === '::1' || finalIp === '127.0.0.1') ? '' : finalIp;
+          const geoResp = await fetch(`http://ip-api.com/json/${fetchIp}`);
+          if (geoResp.ok) {
+            const geoData = await geoResp.json();
+            if (geoData.status === 'success') {
+              geoLoc = `${geoData.city}, ${geoData.countryCode}`;
+              if (finalIp === '::1' || finalIp === '127.0.0.1') finalIp = geoData.query;
+            }
+          }
+        } catch (e) {
+          console.error('GeoIP Fetch failed', e.message);
+        }
+
+        user.activeSessions.push({ 
+          device: deviceName, 
+          location: geoLoc, 
+          ip: finalIp, 
+          isCurrent: true, 
+          icon: icon 
+        });
+        await user.save();
+      }
+      
+      // Inject mock transactions if array is empty (for prototype purposes)
+      if (!user.billing.transactions || user.billing.transactions.length === 0) {
+        user.billing.transactions = [
+          { id: '#TXN-0847', date: '2026-07-25', item: 'Neural Interface v3.2', amount: '-Ȼ2,450', status: 'complete' },
+          { id: '#TXN-0831', date: '2026-07-20', item: 'ICE Breaker Suite', amount: '-Ȼ890', status: 'complete' },
+          { id: '#TXN-0819', date: '2026-07-14', item: 'Holo-Display Module', amount: '-Ȼ1,200', status: 'processing' }
         ];
         await user.save();
       }
@@ -580,6 +633,30 @@ app.put('/api/user/billing', async (req, res) => {
     }
   } catch (err) {
     res.status(500).json({ error: 'Failed to update billing address' });
+  }
+});
+
+// Add Payment Method
+app.post('/api/user/billing/cards', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    if (isMongoConnected) {
+      const user = await User.findById(decoded.id);
+      if (!user) return res.status(404).json({ error: 'User not found' });
+
+      user.billing.cards.push(req.body);
+      await user.save();
+      return res.json({ message: 'Payment method added', cards: user.billing.cards });
+    } else {
+      return res.json({ message: 'Payment method added (fallback)' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to add payment method' });
   }
 });
 
