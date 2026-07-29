@@ -5,6 +5,8 @@
  * ═══════════════════════════════════════════════════════
  */
 
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -14,7 +16,7 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.42.1:27017/cybermarket';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://lmsuser:lms12345@cluster0.6dwomnu.mongodb.net/cybermarket';
 const JWT_SECRET = process.env.JWT_SECRET || 'cyberpunk_neural_link_secret_key_2026';
 
 // Middleware
@@ -26,7 +28,7 @@ app.use(express.static(path.join(__dirname)));
 let isMongoConnected = false;
 
 mongoose.connect(MONGODB_URI, {
-  serverSelectionTimeoutMS: 2000
+  serverSelectionTimeoutMS: 10000
 }).then(() => {
   isMongoConnected = true;
   console.log('⚡ [MONGODB] Connected to MongoDB database at:', MONGODB_URI);
@@ -224,6 +226,123 @@ app.get('/api/user/profile', async (req, res) => {
     }
   } catch (err) {
     return res.status(401).json({ error: 'Invalid or expired token.' });
+  }
+});
+
+// 5. Update Profile Information
+app.put('/api/user/profile', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const { displayName, email, location, website, bio } = req.body;
+
+    if (isMongoConnected) {
+      const user = await User.findByIdAndUpdate(
+        decoded.id,
+        { displayName, email, location, website, bio },
+        { new: true }
+      ).select('-passwordHash');
+      return res.json({ message: 'Profile updated in MongoDB', user });
+    } else {
+      const user = fallbackUsers.find(u => u._id === decoded.id);
+      if (user) {
+        if (displayName) user.displayName = displayName;
+        if (email) user.email = email;
+        if (location) user.location = location;
+        if (website) user.website = website;
+        if (bio) user.bio = bio;
+      }
+      return res.json({ message: 'Profile updated', user });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+
+// 6. Update Security / Password
+app.put('/api/user/password', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword || newPassword.length < 8) {
+      return res.status(400).json({ error: 'Invalid password fields.' });
+    }
+
+    if (isMongoConnected) {
+      const user = await User.findById(decoded.id);
+      if (!user) return res.status(404).json({ error: 'User not found' });
+
+      const isValid = await bcrypt.compare(currentPassword, user.passwordHash);
+      if (!isValid) return res.status(400).json({ error: 'Current password incorrect' });
+
+      user.passwordHash = await bcrypt.hash(newPassword, 10);
+      await user.save();
+      return res.json({ message: 'Password updated successfully in MongoDB' });
+    } else {
+      const user = fallbackUsers.find(u => u._id === decoded.id);
+      if (user) {
+        user.passwordHash = await bcrypt.hash(newPassword, 10);
+      }
+      return res.json({ message: 'Password updated successfully' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update password' });
+  }
+});
+
+// 7. Update Notifications Preferences
+app.put('/api/user/notifications', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    if (isMongoConnected) {
+      const user = await User.findByIdAndUpdate(
+        decoded.id,
+        { notifications: req.body },
+        { new: true }
+      ).select('-passwordHash');
+      return res.json({ message: 'Notifications updated in MongoDB', notifications: user.notifications });
+    } else {
+      return res.json({ message: 'Notifications updated', notifications: req.body });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update notifications' });
+  }
+});
+
+// 8. Update Billing Address
+app.put('/api/user/billing', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    if (isMongoConnected) {
+      const user = await User.findByIdAndUpdate(
+        decoded.id,
+        { 'billing.address': req.body },
+        { new: true }
+      ).select('-passwordHash');
+      return res.json({ message: 'Billing address updated in MongoDB', billing: user.billing });
+    } else {
+      return res.json({ message: 'Billing address updated', billing: req.body });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update billing address' });
   }
 });
 

@@ -60,13 +60,16 @@ const CyberApp = (() => {
    */
   function initKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
-      // Escape closes sidebar / modal
+      // Escape closes sidebar / any open modal
       if (e.key === 'Escape') {
         closeSidebar();
-        const modal = document.getElementById('disconnect-modal');
-        if (modal && !modal.classList.contains('hidden')) {
-          modal.classList.add('hidden');
-        }
+        const modals = ['disconnect-modal', 'add-payment-modal', 'link-account-modal'];
+        modals.forEach(id => {
+          const el = document.getElementById(id);
+          if (el && !el.classList.contains('hidden')) {
+            el.classList.add('hidden');
+          }
+        });
       }
     });
   }

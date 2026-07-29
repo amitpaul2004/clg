@@ -273,18 +273,20 @@
           <h3 class="text-base font-semibold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
             <span style="color: var(--color-accent);">//</span> Linked Accounts
           </h3>
-          <div class="flex flex-wrap gap-3">
-            <div class="flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] bg-[var(--color-muted)]" style="clip-path: polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px));">
+          <div class="flex flex-wrap gap-3" id="linked-accounts-container">
+            <div class="linked-account-badge flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] bg-[var(--color-muted)]" data-account="github" style="clip-path: polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px));">
               <i data-lucide="github" style="width:16px;height:16px;stroke-width:1.5;color:var(--color-foreground);"></i>
               <span style="font-family: var(--font-label); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;">nexus_runner</span>
               <span class="cyber-badge" style="margin-left:0.5rem;">Connected</span>
+              <button class="disconnect-account-btn" title="Disconnect account" style="margin-left:0.5rem; background:none; border:none; color:var(--color-destructive); cursor:pointer; font-size:1rem; line-height:1; padding:2px 4px; opacity:0.7; transition:opacity 150ms;">&times;</button>
             </div>
-            <div class="flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] bg-[var(--color-muted)]" style="clip-path: polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px));">
+            <div class="linked-account-badge flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] bg-[var(--color-muted)]" data-account="twitter" style="clip-path: polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px));">
               <i data-lucide="twitter" style="width:16px;height:16px;stroke-width:1.5;color:var(--color-accent-tertiary);"></i>
               <span style="font-family: var(--font-label); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;">@nexus_77</span>
               <span class="cyber-badge cyber-badge--tertiary" style="margin-left:0.5rem;">Connected</span>
+              <button class="disconnect-account-btn" title="Disconnect account" style="margin-left:0.5rem; background:none; border:none; color:var(--color-destructive); cursor:pointer; font-size:1rem; line-height:1; padding:2px 4px; opacity:0.7; transition:opacity 150ms;">&times;</button>
             </div>
-            <button class="cyber-btn cyber-btn--outline cyber-btn--sm">
+            <button id="link-account-btn" class="cyber-btn cyber-btn--outline cyber-btn--sm">
               <i data-lucide="plus" style="width:14px;height:14px;stroke-width:1.5;"></i>
               Link Account
             </button>
@@ -628,7 +630,7 @@
           </div>
 
           <div class="mt-4">
-            <button class="cyber-btn cyber-btn--outline cyber-btn--sm">
+            <button id="add-payment-btn" class="cyber-btn cyber-btn--outline cyber-btn--sm">
               <i data-lucide="plus" style="width:14px;height:14px;stroke-width:1.5;"></i>
               Add Payment Method
             </button>
@@ -783,6 +785,124 @@
         <i data-lucide="zap" style="width:18px;height:18px;stroke-width:1.5;"></i>
         Re-Connect Neural Link
       </button>
+    </div>
+  </div>
+
+  <!-- ═══════════ ADD PAYMENT METHOD MODAL ═══════════ -->
+  <div id="add-payment-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-[rgba(10,10,15,0.85)] backdrop-blur-md">
+    <div class="cyber-card cyber-card--terminal max-w-md w-full p-6 relative border-[var(--color-accent)] shadow-[0_0_25px_rgba(0,255,136,0.2)]">
+      <div class="terminal-header">
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-title">payment_gateway.exe</span>
+      </div>
+
+      <div class="py-2">
+        <h3 class="text-lg font-bold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          <span style="color: var(--color-accent);">&gt;</span> ADD PAYMENT METHOD
+        </h3>
+
+        <form id="add-payment-form" class="flex flex-col gap-4">
+          <div class="form-group">
+            <label class="cyber-label" for="payment-type">Method Type</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <select id="payment-type" class="cyber-select">
+                <option value="VISA">VISA Credit/Debit</option>
+                <option value="MASTERCARD">MasterCard</option>
+                <option value="CRYPTO">Crypto Wallet (ETH/SOL)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="cyber-label" for="payment-identifier">Card Number / Wallet Address</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <input type="text" id="payment-identifier" class="cyber-input" placeholder="4242 •••• •••• 9988 or 0x7f..." required>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="cyber-label" for="payment-holder">Holder Name / Alias</label>
+              <div class="cyber-input-wrapper">
+                <span class="cyber-input-prefix">&gt;</span>
+                <input type="text" id="payment-holder" class="cyber-input" placeholder="NETRUNNER ALIAS" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="cyber-label" for="payment-expiry">Expiry Date</label>
+              <div class="cyber-input-wrapper">
+                <span class="cyber-input-prefix">&gt;</span>
+                <input type="text" id="payment-expiry" class="cyber-input" placeholder="MM/YY or N/A" value="12/28" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 mt-4">
+            <button type="button" id="cancel-payment-btn" class="cyber-btn cyber-btn--outline">
+              Cancel
+            </button>
+            <button type="submit" class="cyber-btn cyber-btn--glitch">
+              <i data-lucide="check" style="width:14px;height:14px;"></i>
+              Save Method
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ LINK ACCOUNT MODAL ═══════════ -->
+  <div id="link-account-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-[rgba(10,10,15,0.85)] backdrop-blur-md">
+    <div class="cyber-card cyber-card--terminal max-w-md w-full p-6 relative border-[var(--color-accent-tertiary)] shadow-[0_0_25px_rgba(0,212,255,0.2)]">
+      <div class="terminal-header" style="background: rgba(0, 212, 255, 0.15);">
+        <span class="terminal-dot" style="background:#00d4ff;"></span>
+        <span class="terminal-dot" style="background:#ffbd2e;"></span>
+        <span class="terminal-dot" style="background:#6b7280;"></span>
+        <span class="terminal-title" style="color: var(--color-accent-tertiary);">account_linker.exe</span>
+      </div>
+
+      <div class="py-2">
+        <h3 class="text-lg font-bold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          <span style="color: var(--color-accent-tertiary);">&gt;</span> LINK NEW DATANET ACCOUNT
+        </h3>
+
+        <form id="link-account-form" class="flex flex-col gap-4">
+          <div class="form-group">
+            <label class="cyber-label" for="link-platform">Platform</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <select id="link-platform" class="cyber-select">
+                <option value="discord">Discord Matrix</option>
+                <option value="github">GitHub Cyber-Repository</option>
+                <option value="matrix">Matrix Datanet Mesh</option>
+                <option value="telegram">Telegram Encrypted Node</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="cyber-label" for="link-handle">Platform Handle / Username</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <input type="text" id="link-handle" class="cyber-input" placeholder="e.g. netrunner_v3" required>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 mt-4">
+            <button type="button" id="cancel-link-btn" class="cyber-btn cyber-btn--outline">
+              Cancel
+            </button>
+            <button type="submit" class="cyber-btn cyber-btn--tertiary">
+              <i data-lucide="link" style="width:14px;height:14px;"></i>
+              Connect Account
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 

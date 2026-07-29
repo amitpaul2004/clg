@@ -112,11 +112,46 @@
   box-shadow: 0 0 5px var(--color-destructive), 0 0 20px rgba(255, 51, 102, 0.4);
 }
 
+/* Tertiary button (cyan) */
+.cyber-btn--tertiary {
+  border-color: var(--color-accent-tertiary);
+  color: var(--color-accent-tertiary);
+}
+
+.cyber-btn--tertiary:hover {
+  background: var(--color-accent-tertiary);
+  color: var(--color-background);
+  box-shadow: 0 0 5px var(--color-accent-tertiary), 0 0 20px rgba(0, 212, 255, 0.4);
+}
+
 /* Small button */
 .cyber-btn--sm {
   padding: 0.375rem 1rem;
   font-size: 0.75rem;
   min-height: 36px;
+}
+
+/* Disabled button */
+.cyber-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Input error state */
+.cyber-input-error {
+  border-color: var(--color-destructive) !important;
+  box-shadow: 0 0 6px rgba(255, 51, 102, 0.3);
+}
+
+/* Error text below form fields */
+.cyber-error-text {
+  font-family: var(--font-label);
+  font-size: 0.6875rem;
+  color: var(--color-destructive);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 0.375rem;
 }
 
 /* Icon-only button */

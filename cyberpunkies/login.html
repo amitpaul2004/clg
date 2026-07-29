@@ -175,6 +175,11 @@
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
 
+      // Automatically target Node.js server on port 8080 if opened via file:// or another port (Live Server)
+      const API_BASE = (window.location.protocol === 'file:' || window.location.port !== '8080')
+        ? 'http://localhost:8080'
+        : '';
+
       const tabLoginBtn = document.getElementById('tab-login-btn');
       const tabRegBtn = document.getElementById('tab-register-btn');
       const loginForm = document.getElementById('login-form');
@@ -182,13 +187,16 @@
       const statusBox = document.getElementById('auth-status');
 
       // Check server API status
-      fetch('/api/status')
+      fetch(`${API_BASE}/api/status`)
         .then(res => res.json())
         .then(data => {
           const dbText = document.getElementById('db-status-text');
           if (dbText) dbText.textContent = data.database;
         })
-        .catch(() => {});
+        .catch(() => {
+          const dbText = document.getElementById('db-status-text');
+          if (dbText) dbText.textContent = 'Server Offline (Run "npm start")';
+        });
 
       // Tab switching
       tabLoginBtn.addEventListener('click', () => {
@@ -238,7 +246,7 @@
         hideStatus();
 
         try {
-          const res = await fetch('/api/auth/login', {
+          const res = await fetch(`${API_BASE}/api/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ identity, password })
@@ -272,7 +280,7 @@
           }, 1000);
 
         } catch (err) {
-          showStatus('Server connection error', 'error');
+          showStatus('SERVER OFFLINE // Run "npm start" in terminal', 'error');
           submitBtn.disabled = false;
           submitBtn.innerHTML = '<i data-lucide="power" style="width:16px;height:16px;"></i> Initialize Session';
           lucide.createIcons();
@@ -292,7 +300,7 @@
         hideStatus();
 
         try {
-          const res = await fetch('/api/auth/register', {
+          const res = await fetch(`${API_BASE}/api/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ handle, email, password })
@@ -326,7 +334,7 @@
           }, 1000);
 
         } catch (err) {
-          showStatus('Server connection error', 'error');
+          showStatus('SERVER OFFLINE // Run "npm start" in terminal', 'error');
           submitBtn.disabled = false;
           submitBtn.innerHTML = '<i data-lucide="user-check" style="width:16px;height:16px;"></i> Register Credentials (MongoDB)';
           lucide.createIcons();

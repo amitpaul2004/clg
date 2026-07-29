@@ -1,30 +1,26 @@
 /**
  * ═══════════════════════════════════════════════════════
  *  CYBERPUNK PROFILE PAGE — profile.js
- *  Tabs · Form validation · LocalStorage Persistence · Toggles
+ *  Tabs · MongoDB API Sync · Modals · Form Persistence
  * ═══════════════════════════════════════════════════════
  */
 
 const CyberProfile = (() => {
   'use strict';
 
+  const API_BASE = (window.location.protocol === 'file:' || window.location.port !== '8080')
+    ? 'http://localhost:8080'
+    : '';
+
   const STORAGE_KEY = 'cybermarket_user_data';
 
-  // ── Default User Data ───────────────────────────────
-  const defaultUserData = {
+  let userData = {
     displayName: 'NEXUS_RUNNER',
     handle: '@nexus_runner_77',
     email: 'nexus@darknet.io',
     bio: 'Rogue netrunner. Data liberation specialist. The sprawl is my playground.',
     location: 'Neo-Tokyo, Sector 7G',
     website: 'https://nexus-runner.darknet.io',
-    joinDate: '2024-03-15',
-    stats: {
-      orders: 47,
-      wishlist: 128,
-      reviews: 23,
-      credits: 12750
-    },
     notifications: {
       orderUpdates: true,
       priceDrops: true,
@@ -34,12 +30,7 @@ const CyberProfile = (() => {
       schedule: 'realtime'
     },
     security: {
-      twoFactor: true,
-      sessions: [
-        { id: 1, device: 'Chrome / Windows 11', location: 'Neo-Tokyo', ip: '192.168.1.xxx', lastActive: '2 min ago', current: true, active: true },
-        { id: 2, device: 'Firefox / Linux', location: 'Sector 9K', ip: '10.0.42.xxx', lastActive: '3 hours ago', current: false, active: true },
-        { id: 3, device: 'Mobile / Android', location: 'The Sprawl', ip: '172.16.0.xxx', lastActive: '1 day ago', current: false, active: true }
-      ]
+      twoFactor: true
     },
     billing: {
       address: {
@@ -61,39 +52,53 @@ const CyberProfile = (() => {
     }
   };
 
-  let userData = {};
+  /**
+   * Helper to get JWT auth header.
+   */
+  function getAuthHeader() {
+    const token = localStorage.getItem('cybermarket_auth_token');
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  }
 
   /**
-   * Load data from LocalStorage or initialize with defaults.
+   * Load data from MongoDB API or LocalStorage.
    */
-  function loadData() {
+  async function loadData() {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        userData = JSON.parse(stored);
+      const token = localStorage.getItem('cybermarket_auth_token');
+      if (token) {
+        const res = await fetch(`${API_BASE}/api/user/profile`, {
+          headers: { ...getAuthHeader() }
+        });
+        if (res.ok) {
+          const apiUser = await res.json();
+          userData = { ...userData, ...apiUser };
+        }
       } else {
-        userData = JSON.parse(JSON.stringify(defaultUserData));
-        saveData();
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          userData = { ...userData, ...JSON.parse(stored) };
+        }
       }
     } catch (e) {
-      console.warn('LocalStorage unavailable, using default memory state:', e);
-      userData = JSON.parse(JSON.stringify(defaultUserData));
+      console.warn('API error, loading from local cache:', e);
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) userData = { ...userData, ...JSON.parse(stored) };
     }
+    populateData();
   }
 
   /**
-   * Save current userData to LocalStorage.
+   * Save current userData to LocalStorage cache.
    */
-  function saveData() {
+  function saveLocalCache() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
-    } catch (e) {
-      console.error('Failed to save to LocalStorage:', e);
-    }
+    } catch (e) {}
   }
 
   /**
-   * Initialize tab switching.
+   * Initialize tab switching across all 4 tabs.
    */
   function initTabs() {
     const tabs = document.querySelectorAll('.cyber-tab');
@@ -103,18 +108,15 @@ const CyberProfile = (() => {
       tab.addEventListener('click', () => {
         const targetPanel = tab.getAttribute('data-tab');
 
-        // Deactivate all
         tabs.forEach(t => t.classList.remove('cyber-tab--active'));
         panels.forEach(p => p.classList.remove('cyber-tab-panel--active'));
 
-        // Activate selected
         tab.classList.add('cyber-tab--active');
         const panel = document.getElementById(targetPanel);
         if (panel) {
           panel.classList.add('cyber-tab-panel--active');
-          // Re-trigger fade-in animation
           panel.style.animation = 'none';
-          panel.offsetHeight; // force reflow
+          panel.offsetHeight;
           panel.style.animation = '';
         }
       });
@@ -122,7 +124,7 @@ const CyberProfile = (() => {
   }
 
   /**
-   * Initialize toggle switches.
+   * Initialize toggle switches across Profile, Security, Notifications.
    */
   function initToggles() {
     const toggles = document.querySelectorAll('.cyber-toggle input');
@@ -134,13 +136,19 @@ const CyberProfile = (() => {
 
         if (settingName === 'two-factor') {
           userData.security.twoFactor = isEnabled;
-        } else if (settingName && userData.notifications.hasOwnProperty(settingName)) {
-          userData.notifications[settingName] = isEnabled;
+        } else if (settingName && userData.notifications) {
+          const keyMap = {
+            'order-updates': 'orderUpdates',
+            'price-drops': 'priceDrops',
+            'new-messages': 'newMessages',
+            'marketing': 'marketing'
+          };
+          const key = keyMap[settingName] || settingName;
+          userData.notifications[key] = isEnabled;
         }
 
-        saveData();
+        saveLocalCache();
 
-        // Visual feedback
         const label = toggle.closest('.toggle-row')?.querySelector('.toggle-label');
         if (label) {
           const statusEl = label.querySelector('.toggle-status');
@@ -154,25 +162,33 @@ const CyberProfile = (() => {
   }
 
   /**
-   * Initialize form save buttons.
+   * Initialize form save buttons for Profile, Notifications, and Billing Address.
    */
   function initSaveButtons() {
     const saveBtns = document.querySelectorAll('[data-action="save"]');
 
     saveBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.preventDefault();
         const originalText = btn.textContent;
 
-        // Save current form inputs to state
-        saveCurrentFormInputs();
-
-        // Simulate save process
-        btn.textContent = '$ SAVING TO DATASTORE...';
+        btn.textContent = '$ SAVING TO MONGODB...';
         btn.disabled = true;
         btn.style.opacity = '0.7';
 
-        setTimeout(() => {
+        const panelId = btn.closest('.cyber-tab-panel')?.id;
+
+        try {
+          if (panelId === 'tab-profile') {
+            await saveProfileInfo();
+          } else if (panelId === 'tab-notifications') {
+            await saveNotifications();
+          } else if (panelId === 'tab-billing') {
+            await saveBillingAddress();
+          } else {
+            saveLocalCache();
+          }
+
           btn.textContent = '✓ SAVED';
           btn.style.opacity = '1';
           btn.style.boxShadow = 'var(--shadow-neon-lg)';
@@ -181,56 +197,92 @@ const CyberProfile = (() => {
             btn.textContent = originalText;
             btn.disabled = false;
             btn.style.boxShadow = '';
-            CyberApp.showToast('Changes persisted to Datastore', 'success');
+            CyberApp.showToast('DATASET PERSISTED TO MONGODB', 'success');
           }, 1200);
-        }, 600);
+
+        } catch (err) {
+          btn.textContent = originalText;
+          btn.disabled = false;
+          CyberApp.showToast('Failed to save to MongoDB', 'error');
+        }
       });
     });
   }
 
   /**
-   * Read form fields and update state + LocalStorage.
+   * Save Profile Information via PUT /api/user/profile.
    */
-  function saveCurrentFormInputs() {
-    // Profile info form
-    const nameInput = document.getElementById('display-name');
-    const emailInput = document.getElementById('email');
-    const locationInput = document.getElementById('location');
-    const websiteInput = document.getElementById('website');
-    const bioInput = document.getElementById('bio');
+  async function saveProfileInfo() {
+    const displayName = document.getElementById('display-name')?.value.trim();
+    const email = document.getElementById('email')?.value.trim();
+    const location = document.getElementById('location')?.value.trim();
+    const website = document.getElementById('website')?.value.trim();
+    const bio = document.getElementById('bio')?.value.trim();
 
-    if (nameInput) userData.displayName = nameInput.value.trim();
-    if (emailInput) userData.email = emailInput.value.trim();
-    if (locationInput) userData.location = locationInput.value.trim();
-    if (websiteInput) userData.website = websiteInput.value.trim();
-    if (bioInput) userData.bio = bioInput.value.trim();
+    userData.displayName = displayName || userData.displayName;
+    userData.email = email || userData.email;
+    userData.location = location || userData.location;
+    userData.website = website || userData.website;
+    userData.bio = bio || userData.bio;
 
-    // Delivery settings
+    saveLocalCache();
+    updateUIElements();
+
+    const token = localStorage.getItem('cybermarket_auth_token');
+    if (token) {
+      await fetch(`${API_BASE}/api/user/profile`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+        body: JSON.stringify({ displayName, email, location, website, bio })
+      });
+    }
+  }
+
+  /**
+   * Save Notifications Preferences via PUT /api/user/notifications.
+   */
+  async function saveNotifications() {
     const channelSelect = document.getElementById('notify-channel');
     const scheduleSelect = document.getElementById('notify-schedule');
 
     if (channelSelect) userData.notifications.channel = channelSelect.value;
     if (scheduleSelect) userData.notifications.schedule = scheduleSelect.value;
 
-    // Billing address
-    const streetInput = document.getElementById('billing-street');
-    const cityInput = document.getElementById('billing-city');
-    const zipInput = document.getElementById('billing-zip');
+    saveLocalCache();
 
-    if (streetInput || cityInput || zipInput) {
-      userData.billing.address = {
-        street: streetInput ? streetInput.value.trim() : userData.billing.address.street,
-        city: cityInput ? cityInput.value.trim() : userData.billing.address.city,
-        zip: zipInput ? zipInput.value.trim() : userData.billing.address.zip
-      };
+    const token = localStorage.getItem('cybermarket_auth_token');
+    if (token) {
+      await fetch(`${API_BASE}/api/user/notifications`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+        body: JSON.stringify(userData.notifications)
+      });
     }
-
-    saveData();
-    updateUIElements();
   }
 
   /**
-   * Update hero section and live UI elements from state.
+   * Save Billing Address via PUT /api/user/billing.
+   */
+  async function saveBillingAddress() {
+    const street = document.getElementById('billing-street')?.value.trim();
+    const city = document.getElementById('billing-city')?.value.trim();
+    const zip = document.getElementById('billing-zip')?.value.trim();
+
+    userData.billing.address = { street, city, zip };
+    saveLocalCache();
+
+    const token = localStorage.getItem('cybermarket_auth_token');
+    if (token) {
+      await fetch(`${API_BASE}/api/user/billing`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+        body: JSON.stringify(userData.billing.address)
+      });
+    }
+  }
+
+  /**
+   * Update hero heading and avatar handle in real time.
    */
   function updateUIElements() {
     const heroName = document.querySelector('.cyber-glitch[data-text]');
@@ -241,20 +293,19 @@ const CyberProfile = (() => {
   }
 
   /**
-   * Initialize password change form.
+   * Initialize Password Form (Security Tab) via PUT /api/user/password.
    */
   function initPasswordForm() {
     const form = document.getElementById('password-form');
     if (!form) return;
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const currentPw = form.querySelector('[name="current-password"]');
       const newPw = form.querySelector('[name="new-password"]');
       const confirmPw = form.querySelector('[name="confirm-password"]');
 
-      // Clear previous errors
       form.querySelectorAll('.cyber-error-text').forEach(el => el.remove());
       form.querySelectorAll('.cyber-input-error').forEach(el => el.classList.remove('cyber-input-error'));
 
@@ -264,20 +315,47 @@ const CyberProfile = (() => {
         showFieldError(currentPw, 'Current password required');
         valid = false;
       }
-
       if (newPw.value.length < 8) {
         showFieldError(newPw, 'Min 8 characters required');
         valid = false;
       }
-
       if (newPw.value !== confirmPw.value) {
         showFieldError(confirmPw, 'Passwords do not match');
         valid = false;
       }
 
-      if (valid) {
-        CyberApp.showToast('Security credentials updated in Datastore', 'success');
+      if (!valid) return;
+
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = '$ UPDATING PASSKEY...';
+
+      try {
+        const token = localStorage.getItem('cybermarket_auth_token');
+        if (token) {
+          const res = await fetch(`${API_BASE}/api/user/password`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+            body: JSON.stringify({ currentPassword: currentPw.value, newPassword: newPw.value })
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            showFieldError(currentPw, data.error || 'Password update failed');
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+            return;
+          }
+        }
+
+        CyberApp.showToast('SECURITY PASSKEY UPDATED IN MONGODB', 'success');
         form.reset();
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      } catch (err) {
+        CyberApp.showToast('Server error updating password', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
       }
     });
   }
@@ -294,11 +372,10 @@ const CyberProfile = (() => {
   }
 
   /**
-   * Initialize session termination buttons.
+   * Initialize session termination buttons (Security Tab).
    */
   function initSessionActions() {
-    // Individual session terminate
-    document.querySelectorAll('[data-action="terminate-session"]').forEach((btn, index) => {
+    document.querySelectorAll('[data-action="terminate-session"]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const row = btn.closest('tr');
         if (row) {
@@ -306,19 +383,11 @@ const CyberProfile = (() => {
           row.style.textDecoration = 'line-through';
           btn.disabled = true;
           btn.textContent = 'TERMINATED';
-
-          // Mark session inactive in state
-          if (userData.security.sessions[index + 1]) {
-            userData.security.sessions[index + 1].active = false;
-            saveData();
-          }
-
-          CyberApp.showToast('Session revoked & logged out', 'info');
+          CyberApp.showToast('Active session revoked', 'info');
         }
       });
     });
 
-    // Terminate all sessions
     const terminateAll = document.getElementById('terminate-all-sessions');
     if (terminateAll) {
       terminateAll.addEventListener('click', () => {
@@ -332,27 +401,144 @@ const CyberProfile = (() => {
             btn.textContent = 'TERMINATED';
           }
         });
-
-        userData.security.sessions.forEach(sess => {
-          if (!sess.current) sess.active = false;
-        });
-        saveData();
-
-        CyberApp.showToast('All other active sessions revoked', 'success');
+        CyberApp.showToast('All other sessions revoked', 'success');
       });
     }
   }
 
   /**
-   * Populate profile page inputs with data from LocalStorage.
+   * Initialize Add Payment Method and Link Account Modals.
+   */
+  function initModals() {
+    // Add Payment Modal
+    const addPaymentBtn = document.getElementById('add-payment-btn');
+    const paymentModal = document.getElementById('add-payment-modal');
+    const cancelPaymentBtn = document.getElementById('cancel-payment-btn');
+    const paymentForm = document.getElementById('add-payment-form');
+
+    if (addPaymentBtn && paymentModal) {
+      addPaymentBtn.addEventListener('click', () => paymentModal.classList.remove('hidden'));
+      cancelPaymentBtn?.addEventListener('click', () => paymentModal.classList.add('hidden'));
+
+      paymentForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const type = document.getElementById('payment-type').value;
+        const identifier = document.getElementById('payment-identifier').value.trim();
+        const holder = document.getElementById('payment-holder').value.trim();
+        const expiry = document.getElementById('payment-expiry').value.trim();
+
+        const last4 = identifier.slice(-4) || '9988';
+        const cardObj = { type, last4, expiry, name: holder, primary: false };
+
+        userData.billing.cards.push(cardObj);
+        saveLocalCache();
+
+        // Dynamically insert new payment card element
+        const cardContainer = document.querySelector('#tab-billing .flex.flex-wrap.gap-4');
+        if (cardContainer) {
+          const isCrypto = type === 'CRYPTO';
+          const cardHtml = document.createElement('div');
+          cardHtml.className = 'cyber-payment-card';
+          if (isCrypto) cardHtml.style.borderColor = 'var(--color-accent-secondary)';
+
+          cardHtml.innerHTML = `
+            <div class="flex justify-between items-start">
+              <span style="font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: ${isCrypto ? 'var(--color-accent-secondary)' : 'var(--color-foreground)'};">${type}</span>
+              <span class="cyber-badge cyber-badge--tertiary">New</span>
+            </div>
+            <div class="cyber-payment-card-number" style="${isCrypto ? 'font-size:0.8125rem;' : ''}">${identifier}</div>
+            <div class="flex justify-between items-end">
+              <div>
+                <div class="cyber-payment-card-label">Holder</div>
+                <div class="cyber-payment-card-value">${holder}</div>
+              </div>
+              <div>
+                <div class="cyber-payment-card-label">Expires</div>
+                <div class="cyber-payment-card-value">${expiry}</div>
+              </div>
+            </div>
+          `;
+          cardContainer.appendChild(cardHtml);
+        }
+
+        paymentModal.classList.add('hidden');
+        paymentForm.reset();
+        CyberApp.showToast('PAYMENT METHOD ADDED TO ACCOUNT', 'success');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      });
+    }
+
+    // Link Account Modal
+    const linkAccountBtn = document.getElementById('link-account-btn');
+    const linkModal = document.getElementById('link-account-modal');
+    const cancelLinkBtn = document.getElementById('cancel-link-btn');
+    const linkForm = document.getElementById('link-account-form');
+
+    if (linkAccountBtn && linkModal) {
+      linkAccountBtn.addEventListener('click', () => linkModal.classList.remove('hidden'));
+      cancelLinkBtn?.addEventListener('click', () => linkModal.classList.add('hidden'));
+
+      linkForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const platform = document.getElementById('link-platform').value;
+        const handle = document.getElementById('link-handle').value.trim();
+
+        // Insert new linked account badge
+        const badgeContainer = document.getElementById('linked-accounts-container');
+        if (badgeContainer) {
+          const badgeHtml = document.createElement('div');
+          badgeHtml.className = 'linked-account-badge flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] bg-[var(--color-muted)]';
+          badgeHtml.setAttribute('data-account', platform);
+          badgeHtml.style.clipPath = 'polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px))';
+          badgeHtml.innerHTML = `
+            <i data-lucide="shield" style="width:16px;height:16px;stroke-width:1.5;color:var(--color-accent-tertiary);"></i>
+            <span style="font-family: var(--font-label); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;">${handle} (${platform})</span>
+            <span class="cyber-badge cyber-badge--tertiary" style="margin-left:0.5rem;">Connected</span>
+            <button class="disconnect-account-btn" title="Disconnect account" style="margin-left:0.5rem; background:none; border:none; color:var(--color-destructive); cursor:pointer; font-size:1rem; line-height:1; padding:2px 4px; opacity:0.7; transition:opacity 150ms;">&times;</button>
+          `;
+          badgeContainer.insertBefore(badgeHtml, linkAccountBtn);
+        }
+
+        linkModal.classList.add('hidden');
+        linkForm.reset();
+        CyberApp.showToast('NEW DATANET ACCOUNT LINKED', 'success');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      });
+    }
+
+    // Backdrop click to close modals
+    [paymentModal, linkModal].forEach(modal => {
+      if (modal) {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) modal.classList.add('hidden');
+        });
+      }
+    });
+
+    // Disconnect linked accounts (event delegation)
+    const accountsContainer = document.getElementById('linked-accounts-container');
+    if (accountsContainer) {
+      accountsContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('.disconnect-account-btn');
+        if (!btn) return;
+        const badge = btn.closest('.linked-account-badge');
+        if (!badge) return;
+
+        const accountName = badge.getAttribute('data-account') || 'account';
+        badge.style.transition = 'opacity 300ms, transform 300ms';
+        badge.style.opacity = '0';
+        badge.style.transform = 'scale(0.8)';
+        setTimeout(() => badge.remove(), 300);
+        CyberApp.showToast(`${accountName.toUpperCase()} ACCOUNT DISCONNECTED`, 'error');
+      });
+    }
+  }
+
+  /**
+   * Populate inputs across all 4 tabs with state.
    */
   function populateData() {
-    // Hero & Profile inputs
-    const heroName = document.querySelector('.cyber-glitch[data-text]');
-    if (heroName) {
-      heroName.setAttribute('data-text', userData.displayName);
-      heroName.textContent = userData.displayName;
-    }
+    updateUIElements();
 
     const nameInput = document.getElementById('display-name');
     const emailInput = document.getElementById('email');
@@ -367,45 +553,47 @@ const CyberProfile = (() => {
     if (bioInput) bioInput.value = userData.bio || '';
 
     // Notification Toggles & Dropdowns
-    const toggles = {
-      'order-updates': userData.notifications.orderUpdates,
-      'price-drops': userData.notifications.priceDrops,
-      'new-messages': userData.notifications.newMessages,
-      'marketing': userData.notifications.marketing,
-      'two-factor': userData.security.twoFactor
-    };
+    if (userData.notifications) {
+      const toggles = {
+        'order-updates': userData.notifications.orderUpdates,
+        'price-drops': userData.notifications.priceDrops,
+        'new-messages': userData.notifications.newMessages,
+        'marketing': userData.notifications.marketing,
+        'two-factor': userData.security?.twoFactor
+      };
 
-    Object.entries(toggles).forEach(([key, val]) => {
-      const toggleEl = document.querySelector(`input[data-setting="${key}"]`);
-      if (toggleEl) {
-        toggleEl.checked = Boolean(val);
-        const label = toggleEl.closest('.toggle-row')?.querySelector('.toggle-label');
-        if (label) {
-          const statusEl = label.querySelector('.toggle-status');
-          if (statusEl) {
-            statusEl.textContent = val ? 'ENABLED' : 'DISABLED';
-            statusEl.style.color = val ? 'var(--color-accent)' : 'var(--color-muted-foreground)';
+      Object.entries(toggles).forEach(([key, val]) => {
+        const toggleEl = document.querySelector(`input[data-setting="${key}"]`);
+        if (toggleEl) {
+          toggleEl.checked = Boolean(val);
+          const label = toggleEl.closest('.toggle-row')?.querySelector('.toggle-label');
+          if (label) {
+            const statusEl = label.querySelector('.toggle-status');
+            if (statusEl) {
+              statusEl.textContent = val ? 'ENABLED' : 'DISABLED';
+              statusEl.style.color = val ? 'var(--color-accent)' : 'var(--color-muted-foreground)';
+            }
           }
         }
-      }
-    });
+      });
 
-    const channelSelect = document.getElementById('notify-channel');
-    const scheduleSelect = document.getElementById('notify-schedule');
+      const channelSelect = document.getElementById('notify-channel');
+      const scheduleSelect = document.getElementById('notify-schedule');
+      if (channelSelect && userData.notifications.channel) channelSelect.value = userData.notifications.channel;
+      if (scheduleSelect && userData.notifications.schedule) scheduleSelect.value = userData.notifications.schedule;
+    }
 
-    if (channelSelect && userData.notifications.channel) channelSelect.value = userData.notifications.channel;
-    if (scheduleSelect && userData.notifications.schedule) scheduleSelect.value = userData.notifications.schedule;
+    // Billing Address
+    if (userData.billing?.address) {
+      const streetInput = document.getElementById('billing-street');
+      const cityInput = document.getElementById('billing-city');
+      const zipInput = document.getElementById('billing-zip');
+      if (streetInput) streetInput.value = userData.billing.address.street || '';
+      if (cityInput) cityInput.value = userData.billing.address.city || '';
+      if (zipInput) zipInput.value = userData.billing.address.zip || '';
+    }
 
-    // Billing address
-    const streetInput = document.getElementById('billing-street');
-    const cityInput = document.getElementById('billing-city');
-    const zipInput = document.getElementById('billing-zip');
-
-    if (streetInput && userData.billing?.address) streetInput.value = userData.billing.address.street || '';
-    if (cityInput && userData.billing?.address) cityInput.value = userData.billing.address.city || '';
-    if (zipInput && userData.billing?.address) zipInput.value = userData.billing.address.zip || '';
-
-    // Transactions table
+    // Transactions Table
     const tbody = document.getElementById('transactions-body');
     if (tbody && userData.billing?.transactions) {
       tbody.innerHTML = userData.billing.transactions.map(tx => {
@@ -424,29 +612,19 @@ const CyberProfile = (() => {
   }
 
   /**
-   * Reset data to default (utility method).
-   */
-  function resetData() {
-    userData = JSON.parse(JSON.stringify(defaultUserData));
-    saveData();
-    populateData();
-    CyberApp.showToast('Datastore reset to factory defaults', 'info');
-  }
-
-  /**
-   * Initialize the profile page.
+   * Initialize profile page.
    */
   function init() {
     loadData();
-    populateData();
     initTabs();
     initToggles();
     initSaveButtons();
     initPasswordForm();
     initSessionActions();
+    initModals();
   }
 
-  return { init, userData, resetData };
+  return { init, userData };
 })();
 
 // Initialize when DOM is ready
