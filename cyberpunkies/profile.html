@@ -81,17 +81,20 @@
 
     <nav class="cyber-sidebar-nav">
       <div class="cyber-sidebar-section">Main</div>
-      <a href="#" class="cyber-sidebar-item" data-page="dashboard">
+      <a href="dashboard.html" class="cyber-sidebar-item" data-page="dashboard">
         <i data-lucide="layout-dashboard" style="width:18px;height:18px;stroke-width:1.5;"></i>
         Dashboard
       </a>
-      <a href="#" class="cyber-sidebar-item" data-page="products">
+      <a href="products.html" class="cyber-sidebar-item" data-page="products">
         <i data-lucide="package" style="width:18px;height:18px;stroke-width:1.5;"></i>
         Products
       </a>
-      <a href="#" class="cyber-sidebar-item" data-page="orders">
-        <i data-lucide="shopping-cart" style="width:18px;height:18px;stroke-width:1.5;"></i>
-        Orders
+      <a href="#" class="cyber-sidebar-item flex justify-between items-center" data-page="orders">
+        <span class="flex items-center" style="gap: 0.75rem;">
+          <i data-lucide="shopping-cart" style="width:18px;height:18px;stroke-width:1.5;"></i>
+          Cart
+        </span>
+        <span class="cart-badge cyber-badge cyber-badge--secondary hidden">0</span>
       </a>
       <a href="#" class="cyber-sidebar-item" data-page="wishlist">
         <i data-lucide="heart" style="width:18px;height:18px;stroke-width:1.5;"></i>
@@ -117,16 +120,18 @@
   <main class="cyber-main-content">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
 
-      <!-- ─── PAGE HEADER ─── -->
-      <div class="flex items-center gap-3 mb-2">
-        <span style="font-family: var(--font-label); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted-foreground);">
-          <span style="color: var(--color-accent);">&gt;</span> sys.user.settings
-        </span>
-        <span class="cyber-badge">Active</span>
-      </div>
-      <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wider mb-8" style="font-family: var(--font-heading); color: var(--color-foreground);">
-        Profile <span style="color: var(--color-accent);">&amp;</span> Settings
-      </h1>
+      <!-- ═══════════ PAGE: SETTINGS ═══════════ -->
+      <div id="page-settings" class="cyber-page-view">
+        <!-- ─── PAGE HEADER ─── -->
+        <div class="flex items-center gap-3 mb-2">
+          <span style="font-family: var(--font-label); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted-foreground);">
+            <span style="color: var(--color-accent);">&gt;</span> sys.user.settings
+          </span>
+          <span class="cyber-badge">Active</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wider mb-8" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          Profile <span style="color: var(--color-accent);">&amp;</span> Settings
+        </h1>
 
       <!-- ═══════════ PROFILE HERO CARD ═══════════ -->
       <div class="cyber-card cyber-card--holographic cyber-corner-accents mb-8 p-6 sm:p-8">
@@ -630,6 +635,402 @@
           </div>
         </div>
       </div>
+      <!-- ═══════════ END PAGE: SETTINGS ═══════════ -->
+
+      <!-- ═══════════ PAGE: DASHBOARD ═══════════ -->
+      <div id="page-dashboard" class="cyber-page-view hidden">
+        <div class="flex items-center gap-3 mb-2">
+          <span style="font-family: var(--font-label); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted-foreground);">
+            <span style="color: var(--color-accent);">&gt;</span> sys.user.dashboard
+          </span>
+          <span class="cyber-badge">Online</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wider mb-8" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          CyberNet <span style="color: var(--color-accent);">//</span> Dashboard
+        </h1>
+
+        <!-- Metrics Overview Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="cyber-card p-6">
+            <div class="flex justify-between items-start mb-2">
+              <span class="cyber-stat-label">System Health</span>
+              <i data-lucide="activity" style="width:16px;height:16px;color:var(--color-accent);"></i>
+            </div>
+            <div class="text-2xl font-bold text-accent" style="font-family: var(--font-heading); color: var(--color-accent);">100% SECURE</div>
+            <div class="w-full bg-[rgba(255,255,255,0.05)] h-1.5 mt-3 rounded-full overflow-hidden">
+              <div class="bg-[var(--color-accent)] h-full" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <div class="cyber-card p-6">
+            <div class="flex justify-between items-start mb-2">
+              <span class="cyber-stat-label">Neural Sync Rate</span>
+              <i data-lucide="cpu" style="width:16px;height:16px;color:var(--color-accent-tertiary);"></i>
+            </div>
+            <div class="text-2xl font-bold text-accent" style="font-family: var(--font-heading); color: var(--color-accent-tertiary);">98.4%</div>
+            <div class="w-full bg-[rgba(255,255,255,0.05)] h-1.5 mt-3 rounded-full overflow-hidden">
+              <div class="bg-[var(--color-accent-tertiary)] h-full" style="width: 98.4%;"></div>
+            </div>
+          </div>
+
+          <div class="cyber-card p-6">
+            <div class="flex justify-between items-start mb-2">
+              <span class="cyber-stat-label">Active Tunnels</span>
+              <i data-lucide="shield" style="width:16px;height:16px;color:var(--color-accent-secondary);"></i>
+            </div>
+            <div class="text-2xl font-bold" style="font-family: var(--font-heading); color: var(--color-accent-secondary);">4 NODES</div>
+            <div class="w-full bg-[rgba(255,255,255,0.05)] h-1.5 mt-3 rounded-full overflow-hidden">
+              <div class="bg-[var(--color-accent-secondary)] h-full" style="width: 75%;"></div>
+            </div>
+          </div>
+
+          <div class="cyber-card p-6">
+            <div class="flex justify-between items-start mb-2">
+              <span class="cyber-stat-label">Latency</span>
+              <i data-lucide="wifi" style="width:16px;height:16px;color:var(--color-foreground);"></i>
+            </div>
+            <div class="text-2xl font-bold" style="font-family: var(--font-heading); color: var(--color-foreground);">12 MS</div>
+            <div class="w-full bg-[rgba(255,255,255,0.05)] h-1.5 mt-3 rounded-full overflow-hidden">
+              <div class="bg-[var(--color-foreground)] h-full" style="width: 25%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Actions & Activity -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div class="cyber-card p-6 lg:col-span-2">
+            <h3 class="text-base font-semibold tracking-wider mb-4" style="font-family: var(--font-heading);">
+              <span style="color: var(--color-accent);">//</span> Real-Time Sprawl Logs
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="cyber-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Node Event</th>
+                    <th>IP Location</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>21:45:02</td>
+                    <td>Encrypted Ping Received</td>
+                    <td>192.168.1.104 (Neo-Tokyo)</td>
+                    <td><span class="cyber-badge">SUCCESS</span></td>
+                  </tr>
+                  <tr>
+                    <td>21:42:18</td>
+                    <td>ICE Defense Test Run</td>
+                    <td>Localhost ::1</td>
+                    <td><span class="cyber-badge cyber-badge--tertiary">PASSED</span></td>
+                  </tr>
+                  <tr>
+                    <td>21:38:50</td>
+                    <td>Handshake Authorized</td>
+                    <td>10.0.4.77 (Sector 7G)</td>
+                    <td><span class="cyber-badge">ACTIVE</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="cyber-card p-6">
+            <h3 class="text-base font-semibold tracking-wider mb-4" style="font-family: var(--font-heading);">
+              <span style="color: var(--color-accent);">//</span> Quick Actions
+            </h3>
+            <div class="flex flex-col gap-3">
+              <button class="cyber-btn cyber-btn--glitch w-full text-left justify-start" onclick="CyberApp.showToast('LAUNCHING MARKETPLACE...', 'info')">
+                <i data-lucide="shopping-bag" style="width:14px;height:14px;"></i>
+                Launch Marketplace
+              </button>
+              <button class="cyber-btn cyber-btn--outline w-full text-left justify-start" onclick="CyberApp.showToast('ICE DEFENSE ACTIVE', 'success')">
+                <i data-lucide="shield-alert" style="width:14px;height:14px;"></i>
+                Deploy ICE Countermeasures
+              </button>
+              <button class="cyber-btn cyber-btn--secondary w-full text-left justify-start" onclick="CyberApp.showToast('LOCAL CACHE PURGED', 'warning')">
+                <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                Purge System Logs
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ═══════════ END PAGE: DASHBOARD ═══════════ -->
+
+      <!-- ═══════════ PAGE: PRODUCTS ═══════════ -->
+      <div id="page-products" class="cyber-page-view hidden">
+        <div class="flex items-center gap-3 mb-2">
+          <span style="font-family: var(--font-label); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted-foreground);">
+            <span style="color: var(--color-accent);">&gt;</span> sys.user.products
+          </span>
+          <span class="cyber-badge cyber-badge--secondary">Catalog</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wider mb-8" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          Cyberware <span style="color: var(--color-accent);">&amp;</span> Tech Catalog
+        </h1>
+
+        <!-- Search & Filter Bar -->
+        <div class="cyber-card p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+          <div class="cyber-input-wrapper max-w-md w-full">
+            <span class="cyber-input-prefix">&gt;</span>
+            <input type="text" class="cyber-input" placeholder="Search netrunner gear, software, hardware...">
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="cyber-badge">All</span>
+            <span class="cyber-badge cyber-badge--tertiary">Cyberware</span>
+            <span class="cyber-badge cyber-badge--tertiary">Software</span>
+            <span class="cyber-badge cyber-badge--tertiary">Hardware</span>
+          </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <!-- Item 1 -->
+          <div class="cyber-card p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-3">
+                <span class="cyber-badge">Popular</span>
+                <span style="font-family: var(--font-heading); color: var(--color-accent); font-weight: bold;">Ȼ 3,400</span>
+              </div>
+              <h3 class="text-lg font-bold mb-2" style="font-family: var(--font-heading);">Kuro-Tech Neural Deck v4.2</h3>
+              <p class="text-xs text-muted-foreground mb-4">High-speed optical neural bridge for netrunning operations with built-in hardware encryption.</p>
+            </div>
+            <button class="cyber-btn cyber-btn--glitch w-full mt-4" onclick="CyberApp.showToast('PURCHASED KURO-TECH DECK', 'success')">
+              <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> Purchase (Ȼ 3,400)
+            </button>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="cyber-card p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-3">
+                <span class="cyber-badge cyber-badge--secondary">Fav</span>
+                <span style="font-family: var(--font-heading); color: var(--color-accent); font-weight: bold;">Ȼ 1,250</span>
+              </div>
+              <h3 class="text-lg font-bold mb-2" style="font-family: var(--font-heading);">Aegis ICE Breaker Suite</h3>
+              <p class="text-xs text-muted-foreground mb-4">Automated counter-ICE payload suite engineered for high-security corporate firewalls.</p>
+            </div>
+            <button class="cyber-btn cyber-btn--glitch w-full mt-4" onclick="CyberApp.showToast('PURCHASED AEGIS SUITE', 'success')">
+              <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> Purchase (Ȼ 1,250)
+            </button>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="cyber-card p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-3">
+                <span class="cyber-badge cyber-badge--tertiary">Heavy Duty</span>
+                <span style="font-family: var(--font-heading); color: var(--color-accent); font-weight: bold;">Ȼ 4,800</span>
+              </div>
+              <h3 class="text-lg font-bold mb-2" style="font-family: var(--font-heading);">Mil-Tech Subdermal Armor</h3>
+              <p class="text-xs text-muted-foreground mb-4">Subcutaneous ballistic weave offering Class-4 kinetic protection without compromising mobility.</p>
+            </div>
+            <button class="cyber-btn cyber-btn--glitch w-full mt-4" onclick="CyberApp.showToast('PURCHASED SUBDERMAL ARMOR', 'success')">
+              <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> Purchase (Ȼ 4,800)
+            </button>
+          </div>
+
+          <!-- Item 4 -->
+          <div class="cyber-card p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-3">
+                <span class="cyber-badge">Stealth</span>
+                <span style="font-family: var(--font-heading); color: var(--color-accent); font-weight: bold;">Ȼ 6,500</span>
+              </div>
+              <h3 class="text-lg font-bold mb-2" style="font-family: var(--font-heading);">Optical Camouflage Cloak</h3>
+              <p class="text-xs text-muted-foreground mb-4">Light-refracting active camouflage weave for total visual invisibility in low-light environments.</p>
+            </div>
+            <button class="cyber-btn cyber-btn--glitch w-full mt-4" onclick="CyberApp.showToast('PURCHASED CAMO CLOAK', 'success')">
+              <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> Purchase (Ȼ 6,500)
+            </button>
+          </div>
+
+          <!-- Item 5 -->
+          <div class="cyber-card p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-3">
+                <span class="cyber-badge cyber-badge--tertiary">Software</span>
+                <span style="font-family: var(--font-heading); color: var(--color-accent); font-weight: bold;">Ȼ 2,100</span>
+              </div>
+              <h3 class="text-lg font-bold mb-2" style="font-family: var(--font-heading);">Quantum Decryption Deck</h3>
+              <p class="text-xs text-muted-foreground mb-4">Real-time brute force decryption module designed for 1024-bit quantum key Exchange.</p>
+            </div>
+            <button class="cyber-btn cyber-btn--glitch w-full mt-4" onclick="CyberApp.showToast('PURCHASED DECRYPTION DECK', 'success')">
+              <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> Purchase (Ȼ 2,100)
+            </button>
+          </div>
+
+          <!-- Item 6 -->
+          <div class="cyber-card p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-3">
+                <span class="cyber-badge cyber-badge--secondary">Boost</span>
+                <span style="font-family: var(--font-heading); color: var(--color-accent); font-weight: bold;">Ȼ 850</span>
+              </div>
+              <h3 class="text-lg font-bold mb-2" style="font-family: var(--font-heading);">Adrenaline Injector</h3>
+              <p class="text-xs text-muted-foreground mb-4">Synthetic combat adrenaline pump for heightened reflex response during critical operations.</p>
+            </div>
+            <button class="cyber-btn cyber-btn--glitch w-full mt-4" onclick="CyberApp.showToast('PURCHASED ADRENALINE INJECTOR', 'success')">
+              <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> Purchase (Ȼ 850)
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- ═══════════ END PAGE: PRODUCTS ═══════════ -->
+
+      <!-- ═══════════ PAGE: ORDERS ═══════════ -->
+      <div id="page-orders" class="cyber-page-view hidden">
+        <div class="flex items-center gap-3 mb-2">
+          <span style="font-family: var(--font-label); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted-foreground);">
+            <span style="color: var(--color-accent);">&gt;</span> sys.user.orders
+          </span>
+          <span class="cyber-badge">Tracked</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wider mb-8" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          Acquisitions <span style="color: var(--color-accent);">&amp;</span> Delivery Log
+        </h1>
+
+        <div class="cyber-card p-6 mb-8">
+          <h3 class="text-base font-semibold tracking-wider mb-4" style="font-family: var(--font-heading);">
+            <span style="color: var(--color-accent);">//</span> Active Deliveries (3)
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="cyber-table">
+              <thead>
+                <tr>
+                  <th>Order Ref</th>
+                  <th>Date</th>
+                  <th>Items Included</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Tracking</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="color: var(--color-accent);">#CYBER-9942</td>
+                  <td>2026-07-29</td>
+                  <td>Kuro-Tech Neural Deck x1</td>
+                  <td>Ȼ 3,400</td>
+                  <td><span class="cyber-badge">IN TRANSIT</span></td>
+                  <td><button class="cyber-btn cyber-btn--sm cyber-btn--outline" onclick="CyberApp.showToast('TRACKING: Courier drone en route to Sector 7G', 'info')">Track Package</button></td>
+                </tr>
+                <tr>
+                  <td style="color: var(--color-accent);">#CYBER-9801</td>
+                  <td>2026-07-28</td>
+                  <td>Aegis ICE Breaker x2</td>
+                  <td>Ȼ 2,500</td>
+                  <td><span class="cyber-badge cyber-badge--secondary">DISPATCHED</span></td>
+                  <td><button class="cyber-btn cyber-btn--sm cyber-btn--outline" onclick="CyberApp.showToast('TRACKING: Package loaded at Central Hub', 'info')">Track Package</button></td>
+                </tr>
+                <tr>
+                  <td style="color: var(--color-accent);">#CYBER-9654</td>
+                  <td>2026-07-25</td>
+                  <td>Adrenaline Injector x4</td>
+                  <td>Ȼ 3,400</td>
+                  <td><span class="cyber-badge cyber-badge--tertiary">DELIVERED</span></td>
+                  <td><button class="cyber-btn cyber-btn--sm cyber-btn--outline" onclick="CyberApp.showToast('RECEIPT: Delivered to Drop-Box 402', 'success')">View Receipt</button></td>
+                </tr>
+                <tr>
+                  <td style="color: var(--color-accent);">#CYBER-9410</td>
+                  <td>2026-07-21</td>
+                  <td>Subdermal Fiber Armor x1</td>
+                  <td>Ȼ 4,800</td>
+                  <td><span class="cyber-badge cyber-badge--tertiary">DELIVERED</span></td>
+                  <td><button class="cyber-btn cyber-btn--sm cyber-btn--outline" onclick="CyberApp.showToast('RECEIPT: Signed by NEXUS_RUNNER', 'success')">View Receipt</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- ═══════════ END PAGE: ORDERS ═══════════ -->
+
+      <!-- ═══════════ PAGE: WISHLIST ═══════════ -->
+      <div id="page-wishlist" class="cyber-page-view hidden">
+        <div class="flex items-center gap-3 mb-2">
+          <span style="font-family: var(--font-label); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted-foreground);">
+            <span style="color: var(--color-accent);">&gt;</span> sys.user.wishlist
+          </span>
+          <span class="cyber-badge cyber-badge--secondary">Saved</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wider mb-8" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          Saved Gear <span style="color: var(--color-accent);">&amp;</span> Targets
+        </h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div class="cyber-card p-6 flex flex-col justify-between">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="text-lg font-bold" style="font-family: var(--font-heading);">Titanium Cyber-Arm Upgrade</h3>
+                <p class="text-xs text-muted-foreground mt-1">High-torque hydraulic prosthetic replacement.</p>
+              </div>
+              <span class="text-lg font-bold text-accent" style="color: var(--color-accent);">Ȼ 8,900</span>
+            </div>
+            <div class="flex items-center justify-between mt-6">
+              <span class="cyber-badge">In Stock (3)</span>
+              <div class="flex gap-2">
+                <button class="cyber-btn cyber-btn--sm cyber-btn--outline" onclick="this.closest('.cyber-card').remove(); CyberApp.showToast('REMOVED FROM WISHLIST', 'warning');">Remove</button>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--glitch" onclick="CyberApp.showToast('MOVED TO CART', 'success');">Move to Cart</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cyber-card p-6 flex flex-col justify-between">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="text-lg font-bold" style="font-family: var(--font-heading);">Night-Vision Ocular Matrix</h3>
+                <p class="text-xs text-muted-foreground mt-1">Thermal and infrared spectrum ocular implant.</p>
+              </div>
+              <span class="text-lg font-bold text-accent" style="color: var(--color-accent);">Ȼ 2,300</span>
+            </div>
+            <div class="flex items-center justify-between mt-6">
+              <span class="cyber-badge cyber-badge--secondary">Low Stock (1)</span>
+              <div class="flex gap-2">
+                <button class="cyber-btn cyber-btn--sm cyber-btn--outline" onclick="this.closest('.cyber-card').remove(); CyberApp.showToast('REMOVED FROM WISHLIST', 'warning');">Remove</button>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--glitch" onclick="CyberApp.showToast('MOVED TO CART', 'success');">Move to Cart</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cyber-card p-6 flex flex-col justify-between">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="text-lg font-bold" style="font-family: var(--font-heading);">Portable EMP Generator</h3>
+                <p class="text-xs text-muted-foreground mt-1">Compact pulse device for disabling local electronics.</p>
+              </div>
+              <span class="text-lg font-bold text-accent" style="color: var(--color-accent);">Ȼ 1,850</span>
+            </div>
+            <div class="flex items-center justify-between mt-6">
+              <span class="cyber-badge">In Stock (12)</span>
+              <div class="flex gap-2">
+                <button class="cyber-btn cyber-btn--sm cyber-btn--outline" onclick="this.closest('.cyber-card').remove(); CyberApp.showToast('REMOVED FROM WISHLIST', 'warning');">Remove</button>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--glitch" onclick="CyberApp.showToast('MOVED TO CART', 'success');">Move to Cart</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cyber-card p-6 flex flex-col justify-between">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="text-lg font-bold" style="font-family: var(--font-heading);">Cryptographic Keycard Cloner</h3>
+                <p class="text-xs text-muted-foreground mt-1">RFID & NFC duplicator tool for physical security testing.</p>
+              </div>
+              <span class="text-lg font-bold text-accent" style="color: var(--color-accent);">Ȼ 950</span>
+            </div>
+            <div class="flex items-center justify-between mt-6">
+              <span class="cyber-badge">In Stock (8)</span>
+              <div class="flex gap-2">
+                <button class="cyber-btn cyber-btn--sm cyber-btn--outline" onclick="this.closest('.cyber-card').remove(); CyberApp.showToast('REMOVED FROM WISHLIST', 'warning');">Remove</button>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--glitch" onclick="CyberApp.showToast('MOVED TO CART', 'success');">Move to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ═══════════ END PAGE: WISHLIST ═══════════ -->
 
       <!-- ─── FOOTER ─── -->
       <footer class="mt-12 pt-6 border-t border-[var(--color-border)]">

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS_RUNNER // Profile &amp; Settings — CyberMarket</title>
+  <meta name="description" content="User profile and settings panel for CyberMarket — the underground e-commerce marketplace of the sprawl.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS v4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <!-- Tailwind v4 Theme Tokens (must be inline for CDN) -->
+  <style type="text/tailwindcss">
+    @import "tailwindcss";
+
+    @theme {
+      --color-background:        #0a0a0f;
+      --color-foreground:        #e0e0e0;
+      --color-card:              #12121a;
+      --color-muted:             #1c1c2e;
+      --color-muted-foreground:  #6b7280;
+      --color-accent:            #00ff88;
+      --color-accent-secondary:  #ff00ff;
+      --color-accent-tertiary:   #00d4ff;
+      --color-border:            #2a2a3a;
+      --color-input:             #12121a;
+      --color-ring:              #00ff88;
+      --color-destructive:       #ff3366;
+      --color-surface:           #16161f;
+      --color-surface-hover:     #1e1e2e;
+      --color-accent-dim:        rgba(0, 255, 136, 0.12);
+      --color-accent-muted:      rgba(0, 255, 136, 0.25);
+      --color-secondary-dim:     rgba(255, 0, 255, 0.12);
+      --color-tertiary-dim:      rgba(0, 212, 255, 0.12);
+
+      --font-heading: "Orbitron", "Share Tech Mono", monospace;
+      --font-body:    "JetBrains Mono", "Fira Code", "Consolas", monospace;
+      --font-label:   "Share Tech Mono", monospace;
+
+      --shadow-neon:            0 0 5px #00ff88, 0 0 10px rgba(0, 255, 136, 0.25);
+      --shadow-neon-sm:         0 0 3px #00ff88, 0 0 6px rgba(0, 255, 136, 0.2);
+      --shadow-neon-lg:         0 0 10px #00ff88, 0 0 20px rgba(0, 255, 136, 0.4), 0 0 40px rgba(0, 255, 136, 0.2);
+      --shadow-neon-secondary:  0 0 5px #ff00ff, 0 0 20px rgba(255, 0, 255, 0.4);
+      --shadow-neon-tertiary:   0 0 5px #00d4ff, 0 0 20px rgba(0, 212, 255, 0.4);
+      --shadow-card:            0 4px 24px rgba(0, 0, 0, 0.5);
+    }
+  </style>
+
+  <!-- Design System CSS (base reset, effects, components) -->
+  <link rel="stylesheet" href="./css/theme.css">
+  <link rel="stylesheet" href="./css/cyberpunk.css">
+  <link rel="stylesheet" href="./css/components.css">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="bg-background text-foreground font-body cyber-scanlines cyber-grid cyber-gradient-mesh">
+
+  <!-- ═══════════ MOBILE HEADER ═══════════ -->
+  <header class="cyber-mobile-header">
+    <button id="hamburger" class="cyber-hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <span class="cyber-mobile-title">CyberMarket</span>
+  </header>
+
+  <!-- ═══════════ SIDEBAR OVERLAY ═══════════ -->
+  <div id="sidebar-overlay" class="cyber-sidebar-overlay"></div>
+
+  <!-- ═══════════ SIDEBAR NAVIGATION ═══════════ -->
+  <aside id="sidebar" class="cyber-sidebar">
+    <div class="cyber-sidebar-logo">
+      <i data-lucide="zap" style="width:20px;height:20px;"></i>
+      CyberMarket
+    </div>
+
+    <nav class="cyber-sidebar-nav">
+      <div class="cyber-sidebar-section">Main</div>
+      <a href="dashboard.html" class="cyber-sidebar-item cyber-sidebar-item--active" data-page="dashboard">
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Dashboard
+      </a>
+      <a href="products.html" class="cyber-sidebar-item" data-page="products">
+        <i data-lucide="package" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Products
+      </a>
+      <a href="#" class="cyber-sidebar-item flex justify-between items-center" data-page="orders">
+        <span class="flex items-center" style="gap: 0.75rem;">
+          <i data-lucide="shopping-cart" style="width:18px;height:18px;stroke-width:1.5;"></i>
+          Cart
+        </span>
+        <span class="cart-badge cyber-badge cyber-badge--secondary hidden">0</span>
+      </a>
+      <a href="#" class="cyber-sidebar-item" data-page="wishlist">
+        <i data-lucide="heart" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Wishlist
+      </a>
+
+      <div class="cyber-sidebar-section" style="margin-top:0.5rem;">Account</div>
+      <a href="profile.html" class="cyber-sidebar-item" data-page="settings">
+        <i data-lucide="settings" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Settings
+      </a>
+    </nav>
+
+    <div class="cyber-sidebar-footer">
+      <button id="disconnect-btn" class="cyber-sidebar-item w-full text-left" style="padding-left:0; color: var(--color-destructive); cursor: pointer; background: none; border: none;">
+        <i data-lucide="log-out" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Disconnect
+      </button>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="cyber-main-content">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+
+      <!-- ═══════════ PAGE: DASHBOARD ═══════════ -->
+      <div id="page-dashboard" class="cyber-page-view">
+        <div class="flex items-center gap-3 mb-2">
+          <span style="font-family: var(--font-label); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted-foreground);">
+            <span style="color: var(--color-accent);">&gt;</span> sys.user.dashboard
+          </span>
+          <span class="cyber-badge">Online</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wider mb-8" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          CyberNet <span style="color: var(--color-accent);">//</span> Dashboard
+        </h1>
+
+        <!-- Metrics Overview Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="cyber-card p-6">
+            <div class="flex justify-between items-start mb-2">
+              <span class="cyber-stat-label">System Health</span>
+              <i data-lucide="activity" style="width:16px;height:16px;color:var(--color-accent);"></i>
+            </div>
+            <div class="text-2xl font-bold text-accent" style="font-family: var(--font-heading); color: var(--color-accent);">100% SECURE</div>
+            <div class="w-full bg-[rgba(255,255,255,0.05)] h-1.5 mt-3 rounded-full overflow-hidden">
+              <div class="bg-[var(--color-accent)] h-full" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <div class="cyber-card p-6">
+            <div class="flex justify-between items-start mb-2">
+              <span class="cyber-stat-label">Neural Sync Rate</span>
+              <i data-lucide="cpu" style="width:16px;height:16px;color:var(--color-accent-tertiary);"></i>
+            </div>
+            <div id="metric-sync-val" class="text-2xl font-bold text-accent" style="font-family: var(--font-heading); color: var(--color-accent-tertiary);">98.4%</div>
+            <div class="w-full bg-[rgba(255,255,255,0.05)] h-1.5 mt-3 rounded-full overflow-hidden">
+              <div id="metric-sync-bar" class="bg-[var(--color-accent-tertiary)] h-full transition-all duration-500" style="width: 98.4%;"></div>
+            </div>
+          </div>
+
+          <div class="cyber-card p-6">
+            <div class="flex justify-between items-start mb-2">
+              <span class="cyber-stat-label">Active Tunnels</span>
+              <i data-lucide="shield" style="width:16px;height:16px;color:var(--color-accent-secondary);"></i>
+            </div>
+            <div id="metric-tunnels-val" class="text-2xl font-bold" style="font-family: var(--font-heading); color: var(--color-accent-secondary);">4 NODES</div>
+            <div class="w-full bg-[rgba(255,255,255,0.05)] h-1.5 mt-3 rounded-full overflow-hidden">
+              <div id="metric-tunnels-bar" class="bg-[var(--color-accent-secondary)] h-full transition-all duration-500" style="width: 75%;"></div>
+            </div>
+          </div>
+
+          <div class="cyber-card p-6">
+            <div class="flex justify-between items-start mb-2">
+              <span class="cyber-stat-label">Latency</span>
+              <i data-lucide="wifi" style="width:16px;height:16px;color:var(--color-foreground);"></i>
+            </div>
+            <div id="metric-latency-val" class="text-2xl font-bold" style="font-family: var(--font-heading); color: var(--color-foreground);">12 MS</div>
+            <div class="w-full bg-[rgba(255,255,255,0.05)] h-1.5 mt-3 rounded-full overflow-hidden">
+              <div id="metric-latency-bar" class="bg-[var(--color-foreground)] h-full transition-all duration-500" style="width: 25%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Actions & Activity -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div class="cyber-card p-6 lg:col-span-2">
+            <h3 class="text-base font-semibold tracking-wider mb-4" style="font-family: var(--font-heading);">
+              <span style="color: var(--color-accent);">//</span> Real-Time Sprawl Logs
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="cyber-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Node Event</th>
+                    <th>IP Location</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="realtime-logs-body">
+                  <tr>
+                    <td>21:45:02</td>
+                    <td>Encrypted Ping Received</td>
+                    <td>192.168.1.104 (Neo-Tokyo)</td>
+                    <td><span class="cyber-badge">SUCCESS</span></td>
+                  </tr>
+                  <tr>
+                    <td>21:42:18</td>
+                    <td>ICE Defense Test Run</td>
+                    <td>Localhost ::1</td>
+                    <td><span class="cyber-badge cyber-badge--tertiary">PASSED</span></td>
+                  </tr>
+                  <tr>
+                    <td>21:38:50</td>
+                    <td>Handshake Authorized</td>
+                    <td>10.0.4.77 (Sector 7G)</td>
+                    <td><span class="cyber-badge">ACTIVE</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="cyber-card p-6">
+            <h3 class="text-base font-semibold tracking-wider mb-4" style="font-family: var(--font-heading);">
+              <span style="color: var(--color-accent);">//</span> Quick Actions
+            </h3>
+            <div class="flex flex-col gap-3">
+              <button class="cyber-btn cyber-btn--glitch w-full text-left justify-start" onclick="CyberApp.showToast('LAUNCHING MARKETPLACE...', 'info')">
+                <i data-lucide="shopping-bag" style="width:14px;height:14px;"></i>
+                Launch Marketplace
+              </button>
+              <button class="cyber-btn cyber-btn--outline w-full text-left justify-start" onclick="CyberApp.showToast('ICE DEFENSE ACTIVE', 'success')">
+                <i data-lucide="shield-alert" style="width:14px;height:14px;"></i>
+                Deploy ICE Countermeasures
+              </button>
+              <button class="cyber-btn cyber-btn--secondary w-full text-left justify-start" onclick="CyberApp.showToast('LOCAL CACHE PURGED', 'warning')">
+                <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                Purge System Logs
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ═══════════ END PAGE: DASHBOARD ═══════════ -->
+
+      <!-- ─── FOOTER ─── -->
+      <footer class="mt-12 pt-6 border-t border-[var(--color-border)]">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p style="font-family: var(--font-label); font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted-foreground);">
+            <span style="color: var(--color-accent);">$</span> CyberMarket v2.7.1 // All rights reserved 2026
+          </p>
+          <p style="font-family: var(--font-label); font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-muted-foreground);">
+            <span class="cyber-flicker" style="color: var(--color-accent);">●</span> System Status: Operational
+          </p>
+        </div>
+      </footer>
+
+    </div>
+  </main>
+
+  <!-- ═══════════ DISCONNECT CONFIRMATION MODAL ═══════════ -->
+  <div id="disconnect-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-[rgba(10,10,15,0.85)] backdrop-blur-md">
+    <div class="cyber-card cyber-card--terminal max-w-md w-full p-6 relative border-[var(--color-destructive)] shadow-[0_0_20px_rgba(255,51,102,0.3)]">
+      <div class="terminal-header" style="background: rgba(255, 51, 102, 0.15);">
+        <span class="terminal-dot" style="background:#ff3366;"></span>
+        <span class="terminal-dot" style="background:#ffbd2e;"></span>
+        <span class="terminal-dot" style="background:#6b7280;"></span>
+        <span class="terminal-title" style="color: var(--color-destructive);">SYS_WARN // TERMINATE_LINK.EXE</span>
+      </div>
+
+      <div class="text-center py-4">
+        <div class="inline-flex items-center justify-center p-3 mb-4 rounded-full border border-[var(--color-destructive)] bg-[rgba(255,51,102,0.1)] text-[var(--color-destructive)]">
+          <i data-lucide="power-off" style="width:32px;height:32px;stroke-width:1.5;"></i>
+        </div>
+        <h3 class="text-xl font-bold tracking-wider mb-2 cyber-glitch" data-text="TERMINATE NEURAL LINK?" style="font-family: var(--font-heading); color: var(--color-destructive);">
+          TERMINATE NEURAL LINK?
+        </h3>
+        <p style="font-family: var(--font-body); font-size: 0.8125rem; color: var(--color-muted-foreground);" class="mb-6">
+          Disconnecting will suspend your active darknet session and lock secure datastore access.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <button id="cancel-disconnect-btn" class="cyber-btn cyber-btn--outline w-full sm:w-auto">
+            Cancel
+          </button>
+          <button id="confirm-disconnect-btn" class="cyber-btn cyber-btn--destructive w-full sm:w-auto">
+            <i data-lucide="log-out" style="width:14px;height:14px;stroke-width:1.5;"></i>
+            Confirm Disconnect
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SYSTEM DISCONNECTED OVERLAY ═══════════ -->
+  <div id="disconnected-overlay" class="hidden fixed inset-0 z-[9999] flex flex-col items-center justify-center p-6 bg-[#0a0a0f] cyber-scanlines cyber-grid">
+    <div class="cyber-card cyber-card--holographic max-w-lg w-full text-center p-8 sm:p-12 border-[var(--color-destructive)] shadow-[0_0_40px_rgba(255,51,102,0.2)]">
+      <div class="inline-flex items-center justify-center p-4 mb-6 rounded-full border border-[var(--color-destructive)] bg-[rgba(255,51,102,0.1)] text-[var(--color-destructive)]">
+        <i data-lucide="shield-alert" style="width:48px;height:48px;stroke-width:1.5;"></i>
+      </div>
+      <div class="mb-4">
+        <span class="cyber-badge cyber-badge--destructive">Offline // Disconnected</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-black tracking-widest mb-3 cyber-glitch" data-text="NEURAL LINK TERMINATED" style="font-family: var(--font-heading); color: var(--color-destructive);">
+        NEURAL LINK TERMINATED
+      </h2>
+      <p style="font-family: var(--font-body); font-size: 0.875rem; color: var(--color-muted-foreground);" class="mb-8">
+        Your datanet session has been safely closed. Re-authenticate your neural token to resume access to CyberMarket.
+      </p>
+
+      <button id="reconnect-btn" class="cyber-btn cyber-btn--glitch w-full py-3 text-base">
+        <i data-lucide="zap" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Re-Connect Neural Link
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════ ADD PAYMENT METHOD MODAL ═══════════ -->
+  <div id="add-payment-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-[rgba(10,10,15,0.85)] backdrop-blur-md">
+    <div class="cyber-card cyber-card--terminal max-w-md w-full p-6 relative border-[var(--color-accent)] shadow-[0_0_25px_rgba(0,255,136,0.2)]">
+      <div class="terminal-header">
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-title">payment_gateway.exe</span>
+      </div>
+
+      <div class="py-2">
+        <h3 class="text-lg font-bold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          <span style="color: var(--color-accent);">&gt;</span> ADD PAYMENT METHOD
+        </h3>
+
+        <form id="add-payment-form" class="flex flex-col gap-4">
+          <div class="form-group">
+            <label class="cyber-label" for="payment-type">Method Type</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <select id="payment-type" class="cyber-select">
+                <option value="VISA">VISA Credit/Debit</option>
+                <option value="MASTERCARD">MasterCard</option>
+                <option value="CRYPTO">Crypto Wallet (ETH/SOL)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="cyber-label" for="payment-identifier">Card Number / Wallet Address</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <input type="text" id="payment-identifier" class="cyber-input" placeholder="4242 •••• •••• 9988 or 0x7f..." required>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="cyber-label" for="payment-holder">Holder Name / Alias</label>
+              <div class="cyber-input-wrapper">
+                <span class="cyber-input-prefix">&gt;</span>
+                <input type="text" id="payment-holder" class="cyber-input" placeholder="NETRUNNER ALIAS" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="cyber-label" for="payment-expiry">Expiry Date</label>
+              <div class="cyber-input-wrapper">
+                <span class="cyber-input-prefix">&gt;</span>
+                <input type="text" id="payment-expiry" class="cyber-input" placeholder="MM/YY or N/A" value="12/28" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 mt-4">
+            <button type="button" id="cancel-payment-btn" class="cyber-btn cyber-btn--outline">
+              Cancel
+            </button>
+            <button type="submit" class="cyber-btn cyber-btn--glitch">
+              <i data-lucide="check" style="width:14px;height:14px;"></i>
+              Save Method
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ LINK ACCOUNT MODAL ═══════════ -->
+  <div id="link-account-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-[rgba(10,10,15,0.85)] backdrop-blur-md">
+    <div class="cyber-card cyber-card--terminal max-w-md w-full p-6 relative border-[var(--color-accent-tertiary)] shadow-[0_0_25px_rgba(0,212,255,0.2)]">
+      <div class="terminal-header" style="background: rgba(0, 212, 255, 0.15);">
+        <span class="terminal-dot" style="background:#00d4ff;"></span>
+        <span class="terminal-dot" style="background:#ffbd2e;"></span>
+        <span class="terminal-dot" style="background:#6b7280;"></span>
+        <span class="terminal-title" style="color: var(--color-accent-tertiary);">account_linker.exe</span>
+      </div>
+
+      <div class="py-2">
+        <h3 class="text-lg font-bold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          <span style="color: var(--color-accent-tertiary);">&gt;</span> LINK NEW DATANET ACCOUNT
+        </h3>
+
+        <form id="link-account-form" class="flex flex-col gap-4">
+          <div class="form-group">
+            <label class="cyber-label" for="link-platform">Platform</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <select id="link-platform" class="cyber-select">
+                <option value="discord">Discord Matrix</option>
+                <option value="github">GitHub Cyber-Repository</option>
+                <option value="matrix">Matrix Datanet Mesh</option>
+                <option value="telegram">Telegram Encrypted Node</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="cyber-label" for="link-handle">Platform Handle / Username</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <input type="text" id="link-handle" class="cyber-input" placeholder="e.g. netrunner_v3" required>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 mt-4">
+            <button type="button" id="cancel-link-btn" class="cyber-btn cyber-btn--outline">
+              Cancel
+            </button>
+            <button type="submit" class="cyber-btn cyber-btn--tertiary">
+              <i data-lucide="link" style="width:14px;height:14px;"></i>
+              Connect Account
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SETUP 2FA MODAL ═══════════ -->
+  <div id="setup-2fa-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-[rgba(10,10,15,0.85)] backdrop-blur-md">
+    <div class="cyber-card cyber-card--terminal max-w-md w-full p-6 relative border-[var(--color-accent)] shadow-[0_0_25px_rgba(0,255,136,0.2)]">
+      <div class="terminal-header">
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-title">2fa_setup.exe</span>
+      </div>
+
+      <div class="py-2" id="setup-2fa-step1">
+        <h3 class="text-lg font-bold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          <span style="color: var(--color-accent);">&gt;</span> SETUP TWO-FACTOR AUTH
+        </h3>
+        
+        <p style="font-family: var(--font-body); font-size: 0.875rem; color: var(--color-muted-foreground);" class="mb-4">
+          Provide a contact method to receive your secure verification codes.
+        </p>
+
+        <form id="setup-2fa-form" class="flex flex-col gap-4">
+          <div class="form-group">
+            <label class="cyber-label" for="2fa-method">Method</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <select id="2fa-method" class="cyber-select">
+                <option value="phone">Phone Number (SMS)</option>
+                <option value="email">Email Address</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="cyber-label" id="2fa-contact-label" for="2fa-contact">Phone Number</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <input type="text" id="2fa-contact" class="cyber-input" placeholder="+1 555-0198" required>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 mt-4">
+            <button type="button" id="cancel-2fa-btn" class="cyber-btn cyber-btn--outline">
+              Cancel
+            </button>
+            <button type="submit" class="cyber-btn cyber-btn--glitch">
+              <i data-lucide="send" style="width:14px;height:14px;"></i>
+              Send Code
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="py-2 hidden" id="setup-2fa-step2">
+        <h3 class="text-lg font-bold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          <span style="color: var(--color-accent);">&gt;</span> VERIFY OTP
+        </h3>
+        
+        <p style="font-family: var(--font-body); font-size: 0.875rem; color: var(--color-muted-foreground);" class="mb-4">
+          Enter the 6-digit verification code sent to your <span id="verify-method-text" class="text-[var(--color-foreground)]">phone</span>.
+        </p>
+
+        <form id="verify-2fa-form" class="flex flex-col gap-4">
+          <div class="form-group">
+            <label class="cyber-label" for="2fa-code">Verification Code</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <input type="text" id="2fa-code" class="cyber-input text-center tracking-widest text-lg font-mono" placeholder="------" maxlength="6" required>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 mt-4">
+            <button type="button" id="back-2fa-btn" class="cyber-btn cyber-btn--outline">
+              Back
+            </button>
+            <button type="submit" class="cyber-btn cyber-btn--glitch">
+              <i data-lucide="shield-check" style="width:14px;height:14px;"></i>
+              Verify & Enable
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SCRIPTS ═══════════ -->
+  <script src="./js/effects.js"></script>
+  <script src="./js/app.js"></script>
+  <script src="./js/dashboard.js"></script>
+  <script>
+    // Initialize app with current page
+    document.addEventListener('DOMContentLoaded', () => {
+      CyberApp.init('dashboard');
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberMarket // Products — Black Market Hardware</title>
+  <meta name="description" content="CyberMarket products catalog. Browse hardware, wetware, and data chips.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS v4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <!-- Tailwind v4 Theme Tokens (must be inline for CDN) -->
+  <style type="text/tailwindcss">
+    @import "tailwindcss";
+
+    @theme {
+      --color-background:        #0a0a0f;
+      --color-foreground:        #e0e0e0;
+      --color-card:              #12121a;
+      --color-muted:             #1c1c2e;
+      --color-muted-foreground:  #6b7280;
+      --color-accent:            #00ff88;
+      --color-accent-secondary:  #ff00ff;
+      --color-accent-tertiary:   #00d4ff;
+      --color-border:            #2a2a3a;
+      --color-input:             #12121a;
+      --color-ring:              #00ff88;
+      --color-destructive:       #ff3366;
+      --color-surface:           #16161f;
+      --color-surface-hover:     #1e1e2e;
+      --color-accent-dim:        rgba(0, 255, 136, 0.12);
+      --color-accent-muted:      rgba(0, 255, 136, 0.25);
+      --color-secondary-dim:     rgba(255, 0, 255, 0.12);
+      --color-tertiary-dim:      rgba(0, 212, 255, 0.12);
+
+      --font-heading: "Orbitron", "Share Tech Mono", monospace;
+      --font-body:    "JetBrains Mono", "Fira Code", "Consolas", monospace;
+      --font-label:   "Share Tech Mono", monospace;
+
+      --shadow-neon:            0 0 5px #00ff88, 0 0 10px rgba(0, 255, 136, 0.25);
+      --shadow-neon-sm:         0 0 3px #00ff88, 0 0 6px rgba(0, 255, 136, 0.2);
+      --shadow-neon-lg:         0 0 10px #00ff88, 0 0 20px rgba(0, 255, 136, 0.4), 0 0 40px rgba(0, 255, 136, 0.2);
+      --shadow-neon-secondary:  0 0 5px #ff00ff, 0 0 20px rgba(255, 0, 255, 0.4);
+      --shadow-neon-tertiary:   0 0 5px #00d4ff, 0 0 20px rgba(0, 212, 255, 0.4);
+      --shadow-card:            0 4px 24px rgba(0, 0, 0, 0.5);
+    }
+  </style>
+
+  <!-- Design System CSS (base reset, effects, components) -->
+  <link rel="stylesheet" href="./css/theme.css">
+  <link rel="stylesheet" href="./css/cyberpunk.css">
+  <link rel="stylesheet" href="./css/components.css">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="bg-background text-foreground font-body cyber-scanlines cyber-grid cyber-gradient-mesh">
+
+  <!-- ═══════════ MOBILE HEADER ═══════════ -->
+  <header class="cyber-mobile-header">
+    <button id="hamburger" class="cyber-hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <span class="cyber-mobile-title">CyberMarket</span>
+  </header>
+
+  <!-- ═══════════ SIDEBAR OVERLAY ═══════════ -->
+  <div id="sidebar-overlay" class="cyber-sidebar-overlay"></div>
+
+  <!-- ═══════════ SIDEBAR NAVIGATION ═══════════ -->
+  <aside id="sidebar" class="cyber-sidebar">
+    <div class="cyber-sidebar-logo">
+      <i data-lucide="zap" style="width:20px;height:20px;"></i>
+      CyberMarket
+    </div>
+
+    <nav class="cyber-sidebar-nav">
+      <div class="cyber-sidebar-section">Main</div>
+      <a href="dashboard.html" class="cyber-sidebar-item" data-page="dashboard">
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Dashboard
+      </a>
+      <a href="products.html" class="cyber-sidebar-item cyber-sidebar-item--active" data-page="products">
+        <i data-lucide="package" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Products
+      </a>
+      <a href="#" class="cyber-sidebar-item flex justify-between items-center" data-page="orders">
+        <span class="flex items-center" style="gap: 0.75rem;">
+          <i data-lucide="shopping-cart" style="width:18px;height:18px;stroke-width:1.5;"></i>
+          Cart
+        </span>
+        <span class="cart-badge cyber-badge cyber-badge--secondary hidden">0</span>
+      </a>
+      <a href="#" class="cyber-sidebar-item" data-page="wishlist">
+        <i data-lucide="heart" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Wishlist
+      </a>
+
+      <div class="cyber-sidebar-section" style="margin-top:0.5rem;">Account</div>
+      <a href="profile.html" class="cyber-sidebar-item" data-page="settings">
+        <i data-lucide="settings" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Settings
+      </a>
+    </nav>
+
+    <div class="cyber-sidebar-footer">
+      <button id="disconnect-btn" class="cyber-sidebar-item w-full text-left" style="padding-left:0; color: var(--color-destructive); cursor: pointer; background: none; border: none;">
+        <i data-lucide="log-out" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Disconnect
+      </button>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="cyber-main-content">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+
+      <!-- ═══════════ PAGE: PRODUCTS ═══════════ -->
+      <div id="page-products" class="cyber-page-view">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+          <div>
+            <div class="flex items-center gap-3 mb-2">
+              <span style="font-family: var(--font-label); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted-foreground);">
+                <span style="color: var(--color-accent);">&gt;</span> sys.market.catalog
+              </span>
+              <span class="cyber-badge cyber-badge--secondary">Live</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">
+              Black Market <span style="color: var(--color-accent);">//</span> Hardware
+            </h1>
+          </div>
+          
+          <!-- Search & Filter Bar -->
+          <div class="flex gap-2 w-full md:w-auto">
+            <div class="cyber-input-wrapper flex-1 md:w-64">
+              <span class="cyber-input-prefix"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
+              <input type="text" id="product-search" class="cyber-input w-full" placeholder="Search catalog...">
+            </div>
+            <button id="toggle-filters-btn" class="cyber-btn cyber-btn--outline" style="padding: 0.625rem 1rem;">
+              <i data-lucide="filter" style="width:16px;height:16px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="flex flex-wrap gap-2 mb-8" id="product-filters">
+          <button class="cyber-btn cyber-btn--sm cyber-btn--glitch filter-btn" data-filter="all">All Items</button>
+          <button class="cyber-btn cyber-btn--sm cyber-btn--outline filter-btn" data-filter="hardware">Neural Decks</button>
+          <button class="cyber-btn cyber-btn--sm cyber-btn--outline filter-btn" data-filter="wetware">Wetware</button>
+          <button class="cyber-btn cyber-btn--sm cyber-btn--outline filter-btn" data-filter="software">Data Chips</button>
+          <button class="cyber-btn cyber-btn--sm cyber-btn--outline filter-btn" data-filter="armaments">Armaments</button>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="product-grid">
+          
+          <!-- Product Card 1: Neural Deck -->
+          <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent)] transition-all duration-300 product-item" data-category="hardware">
+            <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
+              <img src="./assets/product_neural_deck_1785343367150.png" alt="Kuro-Tech Phantom Deck" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-2 right-2">
+                <span class="cyber-badge">IN STOCK</span>
+              </div>
+            </div>
+            <div class="p-5 flex flex-col flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Phantom Deck v4</h3>
+                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 12,500</span>
+              </div>
+              <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Military-grade neural interface. Bypasses standard ICE protocols in 0.4s.</p>
+              
+              <div class="flex justify-between items-center mt-auto pt-4 border-t border-[rgba(255,255,255,0.05)]">
+                <span class="text-xs" style="color: var(--color-accent-tertiary); font-family: var(--font-label);"><i data-lucide="cpu" class="inline w-3 h-3 mr-1"></i>Hardware</span>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--outline group-hover:bg-[var(--color-accent)] group-hover:text-background" onclick="CyberApp.addToCart(this)">
+                  <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> ADD
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 2: Neural Deck 2 -->
+          <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent-secondary)] transition-all duration-300 product-item" data-category="hardware">
+            <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
+              <img src="./assets/product_neural_deck_2_1785343669798.png" alt="Wasteland Deck" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-2 right-2">
+                <span class="cyber-badge cyber-badge--secondary">REFURBISHED</span>
+              </div>
+            </div>
+            <div class="p-5 flex flex-col flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Scrap Deck Mk.I</h3>
+                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 3,400</span>
+              </div>
+              <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Barebones cyberdeck. Might catch fire. Might fry a corp node. Roll the dice.</p>
+              
+              <div class="flex justify-between items-center mt-auto pt-4 border-t border-[rgba(255,255,255,0.05)]">
+                <span class="text-xs" style="color: var(--color-accent-tertiary); font-family: var(--font-label);"><i data-lucide="cpu" class="inline w-3 h-3 mr-1"></i>Hardware</span>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--outline group-hover:bg-[var(--color-accent-secondary)] group-hover:text-background" onclick="CyberApp.addToCart(this)">
+                  <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> ADD
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 3: Cyber Eye -->
+          <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent-tertiary)] transition-all duration-300 product-item" data-category="wetware">
+            <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
+              <img src="./assets/product_cyber_eye_1785343377884.png" alt="Kiroshi Optics Mk.III" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-2 right-2">
+                <span class="cyber-badge cyber-badge--tertiary">LEGENDARY</span>
+              </div>
+            </div>
+            <div class="p-5 flex flex-col flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Optics Mk.III</h3>
+                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 45,000</span>
+              </div>
+              <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Advanced optical implant with built-in thermal and EM spectrum analysis.</p>
+              
+              <div class="flex justify-between items-center mt-auto pt-4 border-t border-[rgba(255,255,255,0.05)]">
+                <span class="text-xs" style="color: var(--color-accent-secondary); font-family: var(--font-label);"><i data-lucide="eye" class="inline w-3 h-3 mr-1"></i>Wetware</span>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--tertiary" onclick="CyberApp.addToCart(this)">
+                  <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> ADD
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 4: Wetware Muscle -->
+          <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-destructive)] transition-all duration-300 product-item" data-category="wetware">
+            <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
+              <img src="./assets/product_wetware_2_1785343680406.png" alt="Gorilla Synthetic Muscle" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-2 right-2">
+                <span class="cyber-badge cyber-badge--destructive">RESTRICTED</span>
+              </div>
+            </div>
+            <div class="p-5 flex flex-col flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Syn-Muscle Weave</h3>
+                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 28,000</span>
+              </div>
+              <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Biomechanical fiber replacements. Capable of bending mild steel.</p>
+              
+              <div class="flex justify-between items-center mt-auto pt-4 border-t border-[rgba(255,255,255,0.05)]">
+                <span class="text-xs" style="color: var(--color-accent-secondary); font-family: var(--font-label);"><i data-lucide="activity" class="inline w-3 h-3 mr-1"></i>Wetware</span>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--destructive" onclick="CyberApp.addToCart(this)">
+                  <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> ADD
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 5: Data Chip -->
+          <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent)] transition-all duration-300 product-item" data-category="software">
+            <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
+              <img src="./assets/product_data_chip_1785343389468.png" alt="Daemons Decryption Suite" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-2 right-2">
+                <span class="cyber-badge cyber-badge--secondary">ILLEGAL</span>
+              </div>
+            </div>
+            <div class="p-5 flex flex-col flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Daemon Suite</h3>
+                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 8,200</span>
+              </div>
+              <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Self-mutating decryption algorithm. Highly illegal in 12 sectors.</p>
+              
+              <div class="flex justify-between items-center mt-auto pt-4 border-t border-[rgba(255,255,255,0.05)]">
+                <span class="text-xs" style="color: var(--color-accent); font-family: var(--font-label);"><i data-lucide="binary" class="inline w-3 h-3 mr-1"></i>Software</span>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--outline group-hover:bg-[var(--color-accent)] group-hover:text-background" onclick="CyberApp.addToCart(this)">
+                  <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> ADD
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 6: Weapon 1 -->
+          <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent-tertiary)] transition-all duration-300 product-item" data-category="armaments">
+            <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
+              <img src="./assets/product_weapon_1_1785343692209.png" alt="Overture Power Pistol" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-2 right-2">
+                <span class="cyber-badge">IN STOCK</span>
+              </div>
+            </div>
+            <div class="p-5 flex flex-col flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Lexington 9mm</h3>
+                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 4,500</span>
+              </div>
+              <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Reliable polymer handgun with smart-link capability and cyan tracers.</p>
+              
+              <div class="flex justify-between items-center mt-auto pt-4 border-t border-[rgba(255,255,255,0.05)]">
+                <span class="text-xs" style="color: var(--color-destructive); font-family: var(--font-label);"><i data-lucide="crosshair" class="inline w-3 h-3 mr-1"></i>Armament</span>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--tertiary" onclick="CyberApp.addToCart(this)">
+                  <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> ADD
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 7: Weapon 2 -->
+          <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-destructive)] transition-all duration-300 product-item" data-category="armaments">
+            <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
+              <img src="./assets/product_weapon_2_1785343705040.png" alt="Monomolecular Katana" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-2 right-2">
+                <span class="cyber-badge cyber-badge--secondary">RARE</span>
+              </div>
+            </div>
+            <div class="p-5 flex flex-col flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Mono-Katana</h3>
+                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 88,000</span>
+              </div>
+              <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Blade sharpened to a single molecule. Slices through armor like butter.</p>
+              
+              <div class="flex justify-between items-center mt-auto pt-4 border-t border-[rgba(255,255,255,0.05)]">
+                <span class="text-xs" style="color: var(--color-destructive); font-family: var(--font-label);"><i data-lucide="crosshair" class="inline w-3 h-3 mr-1"></i>Armament</span>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--destructive" onclick="CyberApp.addToCart(this)">
+                  <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> ADD
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 8: Cyber Arm -->
+          <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent-tertiary)] transition-all duration-300 product-item" data-category="wetware">
+            <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
+              <img src="./assets/product_cyber_arm_1785343983594.png" alt="Prosthetic Arm" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-2 right-2">
+                <span class="cyber-badge cyber-badge--tertiary">PREMIUM</span>
+              </div>
+            </div>
+            <div class="p-5 flex flex-col flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Titanium Arm</h3>
+                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 62,500</span>
+              </div>
+              <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Military surplus cybernetic limb with hidden compartmental storage and enhanced grip.</p>
+              
+              <div class="flex justify-between items-center mt-auto pt-4 border-t border-[rgba(255,255,255,0.05)]">
+                <span class="text-xs" style="color: var(--color-accent-secondary); font-family: var(--font-label);"><i data-lucide="activity" class="inline w-3 h-3 mr-1"></i>Wetware</span>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--tertiary" onclick="CyberApp.addToCart(this)">
+                  <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> ADD
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 9: AI Core -->
+          <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent)] transition-all duration-300 product-item" data-category="software">
+            <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
+              <img src="./assets/product_software_2_1785343994334.png" alt="AI Defense Core" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-2 right-2">
+                <span class="cyber-badge">IN STOCK</span>
+              </div>
+            </div>
+            <div class="p-5 flex flex-col flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Vanguard AI</h3>
+                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 18,000</span>
+              </div>
+              <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Adaptive intelligence core. Learns intrusion patterns and counters them in real-time.</p>
+              
+              <div class="flex justify-between items-center mt-auto pt-4 border-t border-[rgba(255,255,255,0.05)]">
+                <span class="text-xs" style="color: var(--color-accent); font-family: var(--font-label);"><i data-lucide="binary" class="inline w-3 h-3 mr-1"></i>Software</span>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--outline group-hover:bg-[var(--color-accent)] group-hover:text-background" onclick="CyberApp.addToCart(this)">
+                  <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> ADD
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 10: Drone -->
+          <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent-tertiary)] transition-all duration-300 product-item" data-category="hardware">
+            <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
+              <img src="./assets/product_drone_1_1785344102075.png" alt="Cyber Drone Companion" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-2 right-2">
+                <span class="cyber-badge cyber-badge--tertiary">PREMIUM</span>
+              </div>
+            </div>
+            <div class="p-5 flex flex-col flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Specter Drone</h3>
+                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 32,000</span>
+              </div>
+              <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Autonomous reconnaissance companion. Silent hovering with EMP shielding.</p>
+              
+              <div class="flex justify-between items-center mt-auto pt-4 border-t border-[rgba(255,255,255,0.05)]">
+                <span class="text-xs" style="color: var(--color-accent-secondary); font-family: var(--font-label);"><i data-lucide="cpu" class="inline w-3 h-3 mr-1"></i>Hardware</span>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--tertiary" onclick="CyberApp.addToCart(this)">
+                  <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> ADD
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 11: Holo Emitter -->
+          <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-accent)] transition-all duration-300 product-item" data-category="hardware">
+            <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
+              <img src="./assets/product_holo_1_1785344114810.png" alt="Holo Emitter Puck" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-2 right-2">
+                <span class="cyber-badge">IN STOCK</span>
+              </div>
+            </div>
+            <div class="p-5 flex flex-col flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Mirage Emitter</h3>
+                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 5,400</span>
+              </div>
+              <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Portable holographic decoy projector. Confuses basic optical sensors.</p>
+              
+              <div class="flex justify-between items-center mt-auto pt-4 border-t border-[rgba(255,255,255,0.05)]">
+                <span class="text-xs" style="color: var(--color-accent-tertiary); font-family: var(--font-label);"><i data-lucide="cpu" class="inline w-3 h-3 mr-1"></i>Hardware</span>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--outline group-hover:bg-[var(--color-accent)] group-hover:text-background" onclick="CyberApp.addToCart(this)">
+                  <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> ADD
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 12: Stim Injector -->
+          <div class="cyber-card flex flex-col h-full group hover:border-[var(--color-destructive)] transition-all duration-300 product-item" data-category="wetware">
+            <div class="relative w-full aspect-video overflow-hidden border-b border-[var(--color-border)]">
+              <img src="./assets/product_stim_1_1785344127060.png" alt="Combat Stim Injector" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-2 right-2">
+                <span class="cyber-badge cyber-badge--secondary">RESTRICTED</span>
+              </div>
+            </div>
+            <div class="p-5 flex flex-col flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-bold uppercase tracking-wider" style="font-family: var(--font-heading); color: var(--color-foreground);">Adrenal Stim-Pack</h3>
+                <span style="color: var(--color-accent); font-family: var(--font-heading); font-weight: bold;">Ȼ 1,200</span>
+              </div>
+              <p class="text-sm text-muted-foreground mb-4 flex-1" style="font-family: var(--font-body);">Military grade combat stimulant. +50% reaction time for 120 seconds. Highly addictive.</p>
+              
+              <div class="flex justify-between items-center mt-auto pt-4 border-t border-[rgba(255,255,255,0.05)]">
+                <span class="text-xs" style="color: var(--color-accent-secondary); font-family: var(--font-label);"><i data-lucide="activity" class="inline w-3 h-3 mr-1"></i>Wetware</span>
+                <button class="cyber-btn cyber-btn--sm cyber-btn--destructive" onclick="CyberApp.addToCart(this)">
+                  <i data-lucide="shopping-cart" style="width:14px;height:14px;"></i> ADD
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <!-- ═══════════ END PAGE: PRODUCTS ═══════════ -->
+
+      <!-- ─── FOOTER ─── -->
+      <footer class="mt-12 pt-6 border-t border-[var(--color-border)]">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p style="font-family: var(--font-label); font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-muted-foreground);">
+            <span style="color: var(--color-accent);">$</span> CyberMarket v2.7.1 // All rights reserved 2026
+          </p>
+          <p style="font-family: var(--font-label); font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-muted-foreground);">
+            <span class="cyber-flicker" style="color: var(--color-accent);">●</span> System Status: Operational
+          </p>
+        </div>
+      </footer>
+
+    </div>
+  </main>
+
+  <!-- ═══════════ DISCONNECT CONFIRMATION MODAL ═══════════ -->
+  <div id="disconnect-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-[rgba(10,10,15,0.85)] backdrop-blur-md">
+    <div class="cyber-card cyber-card--terminal max-w-md w-full p-6 relative border-[var(--color-destructive)] shadow-[0_0_20px_rgba(255,51,102,0.3)]">
+      <div class="terminal-header" style="background: rgba(255, 51, 102, 0.15);">
+        <span class="terminal-dot" style="background:#ff3366;"></span>
+        <span class="terminal-dot" style="background:#ffbd2e;"></span>
+        <span class="terminal-dot" style="background:#6b7280;"></span>
+        <span class="terminal-title" style="color: var(--color-destructive);">SYS_WARN // TERMINATE_LINK.EXE</span>
+      </div>
+
+      <div class="text-center py-4">
+        <div class="inline-flex items-center justify-center p-3 mb-4 rounded-full border border-[var(--color-destructive)] bg-[rgba(255,51,102,0.1)] text-[var(--color-destructive)]">
+          <i data-lucide="power-off" style="width:32px;height:32px;stroke-width:1.5;"></i>
+        </div>
+        <h3 class="text-xl font-bold tracking-wider mb-2 cyber-glitch" data-text="TERMINATE NEURAL LINK?" style="font-family: var(--font-heading); color: var(--color-destructive);">
+          TERMINATE NEURAL LINK?
+        </h3>
+        <p style="font-family: var(--font-body); font-size: 0.8125rem; color: var(--color-muted-foreground);" class="mb-6">
+          Disconnecting will suspend your active darknet session and lock secure datastore access.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <button id="cancel-disconnect-btn" class="cyber-btn cyber-btn--outline w-full sm:w-auto">
+            Cancel
+          </button>
+          <button id="confirm-disconnect-btn" class="cyber-btn cyber-btn--destructive w-full sm:w-auto">
+            <i data-lucide="log-out" style="width:14px;height:14px;stroke-width:1.5;"></i>
+            Confirm Disconnect
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SYSTEM DISCONNECTED OVERLAY ═══════════ -->
+  <div id="disconnected-overlay" class="hidden fixed inset-0 z-[9999] flex flex-col items-center justify-center p-6 bg-[#0a0a0f] cyber-scanlines cyber-grid">
+    <div class="cyber-card cyber-card--holographic max-w-lg w-full text-center p-8 sm:p-12 border-[var(--color-destructive)] shadow-[0_0_40px_rgba(255,51,102,0.2)]">
+      <div class="inline-flex items-center justify-center p-4 mb-6 rounded-full border border-[var(--color-destructive)] bg-[rgba(255,51,102,0.1)] text-[var(--color-destructive)]">
+        <i data-lucide="shield-alert" style="width:48px;height:48px;stroke-width:1.5;"></i>
+      </div>
+      <div class="mb-4">
+        <span class="cyber-badge cyber-badge--destructive">Offline // Disconnected</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-black tracking-widest mb-3 cyber-glitch" data-text="NEURAL LINK TERMINATED" style="font-family: var(--font-heading); color: var(--color-destructive);">
+        NEURAL LINK TERMINATED
+      </h2>
+      <p style="font-family: var(--font-body); font-size: 0.875rem; color: var(--color-muted-foreground);" class="mb-8">
+        Your datanet session has been safely closed. Re-authenticate your neural token to resume access to CyberMarket.
+      </p>
+
+      <button id="reconnect-btn" class="cyber-btn cyber-btn--glitch w-full py-3 text-base">
+        <i data-lucide="zap" style="width:18px;height:18px;stroke-width:1.5;"></i>
+        Re-Connect Neural Link
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════ ADD PAYMENT METHOD MODAL ═══════════ -->
+  <div id="add-payment-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-[rgba(10,10,15,0.85)] backdrop-blur-md">
+    <div class="cyber-card cyber-card--terminal max-w-md w-full p-6 relative border-[var(--color-accent)] shadow-[0_0_25px_rgba(0,255,136,0.2)]">
+      <div class="terminal-header">
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-title">payment_gateway.exe</span>
+      </div>
+
+      <div class="py-2">
+        <h3 class="text-lg font-bold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          <span style="color: var(--color-accent);">&gt;</span> ADD PAYMENT METHOD
+        </h3>
+
+        <form id="add-payment-form" class="flex flex-col gap-4">
+          <div class="form-group">
+            <label class="cyber-label" for="payment-type">Method Type</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <select id="payment-type" class="cyber-select">
+                <option value="VISA">VISA Credit/Debit</option>
+                <option value="MASTERCARD">MasterCard</option>
+                <option value="CRYPTO">Crypto Wallet (ETH/SOL)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="cyber-label" for="payment-identifier">Card Number / Wallet Address</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <input type="text" id="payment-identifier" class="cyber-input" placeholder="4242 •••• •••• 9988 or 0x7f..." required>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="cyber-label" for="payment-holder">Holder Name / Alias</label>
+              <div class="cyber-input-wrapper">
+                <span class="cyber-input-prefix">&gt;</span>
+                <input type="text" id="payment-holder" class="cyber-input" placeholder="NETRUNNER ALIAS" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="cyber-label" for="payment-expiry">Expiry Date</label>
+              <div class="cyber-input-wrapper">
+                <span class="cyber-input-prefix">&gt;</span>
+                <input type="text" id="payment-expiry" class="cyber-input" placeholder="MM/YY or N/A" value="12/28" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 mt-4">
+            <button type="button" id="cancel-payment-btn" class="cyber-btn cyber-btn--outline">
+              Cancel
+            </button>
+            <button type="submit" class="cyber-btn cyber-btn--glitch">
+              <i data-lucide="check" style="width:14px;height:14px;"></i>
+              Save Method
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ LINK ACCOUNT MODAL ═══════════ -->
+  <div id="link-account-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-[rgba(10,10,15,0.85)] backdrop-blur-md">
+    <div class="cyber-card cyber-card--terminal max-w-md w-full p-6 relative border-[var(--color-accent-tertiary)] shadow-[0_0_25px_rgba(0,212,255,0.2)]">
+      <div class="terminal-header" style="background: rgba(0, 212, 255, 0.15);">
+        <span class="terminal-dot" style="background:#00d4ff;"></span>
+        <span class="terminal-dot" style="background:#ffbd2e;"></span>
+        <span class="terminal-dot" style="background:#6b7280;"></span>
+        <span class="terminal-title" style="color: var(--color-accent-tertiary);">account_linker.exe</span>
+      </div>
+
+      <div class="py-2">
+        <h3 class="text-lg font-bold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          <span style="color: var(--color-accent-tertiary);">&gt;</span> LINK NEW DATANET ACCOUNT
+        </h3>
+
+        <form id="link-account-form" class="flex flex-col gap-4">
+          <div class="form-group">
+            <label class="cyber-label" for="link-platform">Platform</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <select id="link-platform" class="cyber-select">
+                <option value="discord">Discord Matrix</option>
+                <option value="github">GitHub Cyber-Repository</option>
+                <option value="matrix">Matrix Datanet Mesh</option>
+                <option value="telegram">Telegram Encrypted Node</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="cyber-label" for="link-handle">Platform Handle / Username</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <input type="text" id="link-handle" class="cyber-input" placeholder="e.g. netrunner_v3" required>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 mt-4">
+            <button type="button" id="cancel-link-btn" class="cyber-btn cyber-btn--outline">
+              Cancel
+            </button>
+            <button type="submit" class="cyber-btn cyber-btn--tertiary">
+              <i data-lucide="link" style="width:14px;height:14px;"></i>
+              Connect Account
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SETUP 2FA MODAL ═══════════ -->
+  <div id="setup-2fa-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-[rgba(10,10,15,0.85)] backdrop-blur-md">
+    <div class="cyber-card cyber-card--terminal max-w-md w-full p-6 relative border-[var(--color-accent)] shadow-[0_0_25px_rgba(0,255,136,0.2)]">
+      <div class="terminal-header">
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-title">2fa_setup.exe</span>
+      </div>
+
+      <div class="py-2" id="setup-2fa-step1">
+        <h3 class="text-lg font-bold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          <span style="color: var(--color-accent);">&gt;</span> SETUP TWO-FACTOR AUTH
+        </h3>
+        
+        <p style="font-family: var(--font-body); font-size: 0.875rem; color: var(--color-muted-foreground);" class="mb-4">
+          Provide a contact method to receive your secure verification codes.
+        </p>
+
+        <form id="setup-2fa-form" class="flex flex-col gap-4">
+          <div class="form-group">
+            <label class="cyber-label" for="2fa-method">Method</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <select id="2fa-method" class="cyber-select">
+                <option value="phone">Phone Number (SMS)</option>
+                <option value="email">Email Address</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="cyber-label" id="2fa-contact-label" for="2fa-contact">Phone Number</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <input type="text" id="2fa-contact" class="cyber-input" placeholder="+1 555-0198" required>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 mt-4">
+            <button type="button" id="cancel-2fa-btn" class="cyber-btn cyber-btn--outline">
+              Cancel
+            </button>
+            <button type="submit" class="cyber-btn cyber-btn--glitch">
+              <i data-lucide="send" style="width:14px;height:14px;"></i>
+              Send Code
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="py-2 hidden" id="setup-2fa-step2">
+        <h3 class="text-lg font-bold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          <span style="color: var(--color-accent);">&gt;</span> VERIFY OTP
+        </h3>
+        
+        <p style="font-family: var(--font-body); font-size: 0.875rem; color: var(--color-muted-foreground);" class="mb-4">
+          Enter the 6-digit verification code sent to your <span id="verify-method-text" class="text-[var(--color-foreground)]">phone</span>.
+        </p>
+
+        <form id="verify-2fa-form" class="flex flex-col gap-4">
+          <div class="form-group">
+            <label class="cyber-label" for="2fa-code">Verification Code</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <input type="text" id="2fa-code" class="cyber-input text-center tracking-widest text-lg font-mono" placeholder="------" maxlength="6" required>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 mt-4">
+            <button type="button" id="back-2fa-btn" class="cyber-btn cyber-btn--outline">
+              Back
+            </button>
+            <button type="submit" class="cyber-btn cyber-btn--glitch">
+              <i data-lucide="shield-check" style="width:14px;height:14px;"></i>
+              Verify & Enable
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SCRIPTS ═══════════ -->
+  <script src="./js/effects.js"></script>
+  <script src="./js/app.js"></script>
+  <script src="./js/products.js"></script>
+  <script>
+    // Initialize app with current page
+    document.addEventListener('DOMContentLoaded', () => {
+      CyberApp.init('dashboard');
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

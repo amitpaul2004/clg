@@ -36,7 +36,7 @@
 
 .cyber-btn:hover {
   background: var(--color-accent);
-  color: var(--color-background);
+  color: #050505 !important;
   box-shadow: var(--shadow-neon);
   transform: translateY(-1px);
 }
@@ -59,7 +59,7 @@
 
 .cyber-btn--secondary:hover {
   background: var(--color-accent-secondary);
-  color: var(--color-background);
+  color: #050505 !important;
   box-shadow: var(--shadow-neon-secondary);
 }
 
@@ -91,8 +91,7 @@
 /* Glitch CTA button */
 .cyber-btn--glitch {
   background: var(--color-accent);
-  color: var(--color-background);
-  font-weight: 700;
+  color: #050505 !important;
 }
 
 .cyber-btn--glitch:hover {
@@ -108,7 +107,7 @@
 
 .cyber-btn--destructive:hover {
   background: var(--color-destructive);
-  color: var(--color-background);
+  color: #050505 !important;
   box-shadow: 0 0 5px var(--color-destructive), 0 0 20px rgba(255, 51, 102, 0.4);
 }
 
@@ -120,7 +119,7 @@
 
 .cyber-btn--tertiary:hover {
   background: var(--color-accent-tertiary);
-  color: var(--color-background);
+  color: #050505 !important;
   box-shadow: 0 0 5px var(--color-accent-tertiary), 0 0 20px rgba(0, 212, 255, 0.4);
 }
 

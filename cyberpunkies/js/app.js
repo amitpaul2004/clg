@@ -9,6 +9,7 @@ const CyberApp = (() => {
   'use strict';
 
   let sidebarOpen = false;
+  let cartTotal = 0;
 
   /**
    * Toggle sidebar visibility on mobile.
@@ -91,13 +92,15 @@ const CyberApp = (() => {
     const colors = {
       success: 'var(--color-accent)',
       error: 'var(--color-destructive)',
-      info: 'var(--color-accent-tertiary)'
+      info: 'var(--color-accent-tertiary)',
+      warning: 'var(--color-accent-secondary)'
     };
 
     const icons = {
       success: '✓',
       error: '✗',
-      info: 'ℹ'
+      info: 'ℹ',
+      warning: '⚠'
     };
 
     toast.style.cssText = `
@@ -242,5 +245,42 @@ const CyberApp = (() => {
     });
   }
 
-  return { init, toggleSidebar, closeSidebar, showToast, setActivePage };
+  /**
+   * Add to Cart Logic
+   */
+  function addToCart(btnElement) {
+    cartTotal++;
+    
+    // Update all cart badges
+    const badges = document.querySelectorAll('.cart-badge');
+    badges.forEach(badge => {
+      badge.textContent = cartTotal;
+      badge.classList.remove('hidden');
+      // Trigger animation
+      badge.style.animation = 'none';
+      badge.offsetHeight;
+      badge.style.animation = 'toast-in 0.3s ease-out';
+    });
+
+    // Show Toast
+    showToast('ADDED TO CART', 'success');
+
+    // Update Button
+    if (btnElement) {
+      btnElement.innerHTML = '<i data-lucide="check" style="width:14px;height:14px;"></i> ADDED';
+      btnElement.classList.remove('cyber-btn--outline', 'cyber-btn--tertiary', 'cyber-btn--secondary', 'cyber-btn--destructive');
+      btnElement.classList.add('cyber-btn--glitch');
+      btnElement.style.pointerEvents = 'none';
+      btnElement.style.opacity = '0.8';
+      
+      // Re-initialize lucide icons inside the button
+      if (window.lucide) {
+        window.lucide.createIcons({
+          root: btnElement
+        });
+      }
+    }
+  }
+
+  return { init, toggleSidebar, closeSidebar, showToast, setActivePage, addToCart };
 })();
