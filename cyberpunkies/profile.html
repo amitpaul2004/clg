@@ -274,18 +274,7 @@
             <span style="color: var(--color-accent);">//</span> Linked Accounts
           </h3>
           <div class="flex flex-wrap gap-3" id="linked-accounts-container">
-            <div class="linked-account-badge flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] bg-[var(--color-muted)]" data-account="github" style="clip-path: polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px));">
-              <i data-lucide="github" style="width:16px;height:16px;stroke-width:1.5;color:var(--color-foreground);"></i>
-              <span style="font-family: var(--font-label); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;">nexus_runner</span>
-              <span class="cyber-badge" style="margin-left:0.5rem;">Connected</span>
-              <button class="disconnect-account-btn" title="Disconnect account" style="margin-left:0.5rem; background:none; border:none; color:var(--color-destructive); cursor:pointer; font-size:1rem; line-height:1; padding:2px 4px; opacity:0.7; transition:opacity 150ms;">&times;</button>
-            </div>
-            <div class="linked-account-badge flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] bg-[var(--color-muted)]" data-account="twitter" style="clip-path: polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px));">
-              <i data-lucide="twitter" style="width:16px;height:16px;stroke-width:1.5;color:var(--color-accent-tertiary);"></i>
-              <span style="font-family: var(--font-label); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;">@nexus_77</span>
-              <span class="cyber-badge cyber-badge--tertiary" style="margin-left:0.5rem;">Connected</span>
-              <button class="disconnect-account-btn" title="Disconnect account" style="margin-left:0.5rem; background:none; border:none; color:var(--color-destructive); cursor:pointer; font-size:1rem; line-height:1; padding:2px 4px; opacity:0.7; transition:opacity 150ms;">&times;</button>
-            </div>
+            <!-- Linked account badges are rendered dynamically from MongoDB -->
             <button id="link-account-btn" class="cyber-btn cyber-btn--outline cyber-btn--sm">
               <i data-lucide="plus" style="width:14px;height:14px;stroke-width:1.5;"></i>
               Link Account
@@ -314,23 +303,32 @@
             <div class="flex flex-col gap-4">
               <div class="form-group">
                 <label class="cyber-label" for="current-password">Current Password</label>
-                <div class="cyber-input-wrapper">
+                <div class="cyber-input-wrapper" style="position:relative;">
                   <span class="cyber-input-prefix">&gt;</span>
-                  <input type="password" id="current-password" name="current-password" class="cyber-input" placeholder="Enter current password...">
+                  <input type="password" id="current-password" name="current-password" class="cyber-input" placeholder="Enter current password..." style="padding-right:2.5rem;">
+                  <button type="button" class="password-toggle-btn" data-target="current-password" title="Show/hide password" style="position:absolute; right:0.5rem; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--color-muted-foreground); cursor:pointer; padding:4px; transition:color 150ms;">
+                    <i data-lucide="eye" style="width:16px;height:16px;stroke-width:1.5;"></i>
+                  </button>
                 </div>
               </div>
               <div class="form-group">
                 <label class="cyber-label" for="new-password">New Password</label>
-                <div class="cyber-input-wrapper">
+                <div class="cyber-input-wrapper" style="position:relative;">
                   <span class="cyber-input-prefix">&gt;</span>
-                  <input type="password" id="new-password" name="new-password" class="cyber-input" placeholder="Minimum 8 characters...">
+                  <input type="password" id="new-password" name="new-password" class="cyber-input" placeholder="Minimum 8 characters..." style="padding-right:2.5rem;">
+                  <button type="button" class="password-toggle-btn" data-target="new-password" title="Show/hide password" style="position:absolute; right:0.5rem; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--color-muted-foreground); cursor:pointer; padding:4px; transition:color 150ms;">
+                    <i data-lucide="eye" style="width:16px;height:16px;stroke-width:1.5;"></i>
+                  </button>
                 </div>
               </div>
               <div class="form-group">
                 <label class="cyber-label" for="confirm-password">Confirm Password</label>
-                <div class="cyber-input-wrapper">
+                <div class="cyber-input-wrapper" style="position:relative;">
                   <span class="cyber-input-prefix">&gt;</span>
-                  <input type="password" id="confirm-password" name="confirm-password" class="cyber-input" placeholder="Re-enter password...">
+                  <input type="password" id="confirm-password" name="confirm-password" class="cyber-input" placeholder="Re-enter password..." style="padding-right:2.5rem;">
+                  <button type="button" class="password-toggle-btn" data-target="confirm-password" title="Show/hide password" style="position:absolute; right:0.5rem; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--color-muted-foreground); cursor:pointer; padding:4px; transition:color 150ms;">
+                    <i data-lucide="eye" style="width:16px;height:16px;stroke-width:1.5;"></i>
+                  </button>
                 </div>
               </div>
               <div class="flex justify-end mt-2">
@@ -899,6 +897,89 @@
             <button type="submit" class="cyber-btn cyber-btn--tertiary">
               <i data-lucide="link" style="width:14px;height:14px;"></i>
               Connect Account
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SETUP 2FA MODAL ═══════════ -->
+  <div id="setup-2fa-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-[rgba(10,10,15,0.85)] backdrop-blur-md">
+    <div class="cyber-card cyber-card--terminal max-w-md w-full p-6 relative border-[var(--color-accent)] shadow-[0_0_25px_rgba(0,255,136,0.2)]">
+      <div class="terminal-header">
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-title">2fa_setup.exe</span>
+      </div>
+
+      <div class="py-2" id="setup-2fa-step1">
+        <h3 class="text-lg font-bold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          <span style="color: var(--color-accent);">&gt;</span> SETUP TWO-FACTOR AUTH
+        </h3>
+        
+        <p style="font-family: var(--font-body); font-size: 0.875rem; color: var(--color-muted-foreground);" class="mb-4">
+          Provide a contact method to receive your secure verification codes.
+        </p>
+
+        <form id="setup-2fa-form" class="flex flex-col gap-4">
+          <div class="form-group">
+            <label class="cyber-label" for="2fa-method">Method</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <select id="2fa-method" class="cyber-select">
+                <option value="phone">Phone Number (SMS)</option>
+                <option value="email">Email Address</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="cyber-label" id="2fa-contact-label" for="2fa-contact">Phone Number</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <input type="text" id="2fa-contact" class="cyber-input" placeholder="+1 555-0198" required>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 mt-4">
+            <button type="button" id="cancel-2fa-btn" class="cyber-btn cyber-btn--outline">
+              Cancel
+            </button>
+            <button type="submit" class="cyber-btn cyber-btn--glitch">
+              <i data-lucide="send" style="width:14px;height:14px;"></i>
+              Send Code
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="py-2 hidden" id="setup-2fa-step2">
+        <h3 class="text-lg font-bold tracking-wider mb-4" style="font-family: var(--font-heading); color: var(--color-foreground);">
+          <span style="color: var(--color-accent);">&gt;</span> VERIFY OTP
+        </h3>
+        
+        <p style="font-family: var(--font-body); font-size: 0.875rem; color: var(--color-muted-foreground);" class="mb-4">
+          Enter the 6-digit verification code sent to your <span id="verify-method-text" class="text-[var(--color-foreground)]">phone</span>.
+        </p>
+
+        <form id="verify-2fa-form" class="flex flex-col gap-4">
+          <div class="form-group">
+            <label class="cyber-label" for="2fa-code">Verification Code</label>
+            <div class="cyber-input-wrapper">
+              <span class="cyber-input-prefix">&gt;</span>
+              <input type="text" id="2fa-code" class="cyber-input text-center tracking-widest text-lg font-mono" placeholder="------" maxlength="6" required>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 mt-4">
+            <button type="button" id="back-2fa-btn" class="cyber-btn cyber-btn--outline">
+              Back
+            </button>
+            <button type="submit" class="cyber-btn cyber-btn--glitch">
+              <i data-lucide="shield-check" style="width:14px;height:14px;"></i>
+              Verify & Enable
             </button>
           </div>
         </form>

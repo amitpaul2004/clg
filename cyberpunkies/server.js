@@ -13,6 +13,43 @@ const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const twilio = require('twilio');
+const nodemailer = require('nodemailer');
+
+// Helper to send real SMS via Twilio if configured
+async function sendSMS(to, body) {
+  const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER } = process.env;
+  if (TWILIO_ACCOUNT_SID && TWILIO_AUTH_TOKEN && TWILIO_PHONE_NUMBER) {
+    try {
+      const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+      await client.messages.create({ body, from: TWILIO_PHONE_NUMBER, to });
+      return true;
+    } catch (error) {
+      console.error('[TWILIO ERROR]', error.message);
+      return false;
+    }
+  }
+  return false;
+}
+
+// Helper to send real Email via Nodemailer if configured
+async function sendEmail(to, subject, text) {
+  const { SMTP_EMAIL, SMTP_PASSWORD } = process.env;
+  if (SMTP_EMAIL && SMTP_PASSWORD) {
+    try {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail', // Standardizing on Gmail for simplicity
+        auth: { user: SMTP_EMAIL, pass: SMTP_PASSWORD }
+      });
+      await transporter.sendMail({ from: SMTP_EMAIL, to, subject, text });
+      return true;
+    } catch (error) {
+      console.error('[NODEMAILER ERROR]', error.message);
+      return false;
+    }
+  }
+  return false;
+}
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -55,7 +92,11 @@ const UserSchema = new mongoose.Schema({
     schedule: { type: String, default: 'realtime' }
   },
   security: {
-    twoFactor: { type: Boolean, default: true }
+    twoFactor: { type: Boolean, default: false },
+    twoFactorMethod: { type: String, default: '' },
+    twoFactorContact: { type: String, default: '' },
+    tempOTP: { type: String, default: null },
+    tempOTPExpires: { type: Date, default: null }
   },
   billing: {
     address: {
@@ -64,6 +105,20 @@ const UserSchema = new mongoose.Schema({
       zip: { type: String, default: 'NT-77042' }
     }
   },
+  linkedAccounts: [{
+    platform: { type: String, required: true },
+    handle: { type: String, required: true },
+    linkedAt: { type: Date, default: Date.now }
+  }],
+  activeSessions: [{
+    _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
+    device: { type: String, required: true },
+    location: { type: String, required: true },
+    ip: { type: String, required: true },
+    lastActive: { type: Date, default: Date.now },
+    isCurrent: { type: Boolean, default: false },
+    icon: { type: String, default: 'monitor' } // monitor or smartphone
+  }],
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -218,6 +273,17 @@ app.get('/api/user/profile', async (req, res) => {
     if (isMongoConnected) {
       const user = await User.findById(decoded.id).select('-passwordHash');
       if (!user) return res.status(404).json({ error: 'User not found' });
+      
+      // Inject mock active sessions if array is empty (for prototype purposes)
+      if (!user.activeSessions || user.activeSessions.length === 0) {
+        user.activeSessions = [
+          { device: 'Chrome / Windows 11', location: 'Neo-Tokyo', ip: '192.168.1.144', isCurrent: true, icon: 'monitor' },
+          { device: 'Firefox / Linux', location: 'Sector 9K', ip: '10.0.42.112', isCurrent: false, icon: 'monitor', lastActive: new Date(Date.now() - 3 * 60 * 60 * 1000) },
+          { device: 'Mobile / Android', location: 'The Sprawl', ip: '172.16.0.45', isCurrent: false, icon: 'smartphone', lastActive: new Date(Date.now() - 24 * 60 * 60 * 1000) }
+        ];
+        await user.save();
+      }
+      
       return res.json(user);
     } else {
       const user = fallbackUsers.find(u => u._id === decoded.id);
@@ -298,7 +364,178 @@ app.put('/api/user/password', async (req, res) => {
   }
 });
 
-// 7. Update Notifications Preferences
+// 6a. Update Security Settings
+app.put('/api/user/security', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+    
+    if (isMongoConnected) {
+      const user = await User.findByIdAndUpdate(
+        decoded.id,
+        { security: req.body },
+        { new: true }
+      ).select('-passwordHash');
+      return res.json({ message: 'Security settings updated', security: user.security });
+    } else {
+      return res.json({ message: 'Security settings updated (fallback)', security: req.body });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update security settings' });
+  }
+});
+
+// 6b. Send 2FA Verification OTP
+app.post('/api/user/security/otp/send', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const { method, contact } = req.body;
+
+    if (!method || !contact) {
+      return res.status(400).json({ error: 'Method and contact are required.' });
+    }
+
+    // Generate a 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expires = new Date(Date.now() + 5 * 60 * 1000); // 5 mins expiry
+
+    if (isMongoConnected) {
+      await User.findByIdAndUpdate(decoded.id, {
+        'security.tempOTP': otp,
+        'security.tempOTPExpires': expires
+      });
+      
+      let sentReal = false;
+      const message = `Your Cyberpunk Nexus verification code is: ${otp}. It expires in 5 minutes.`;
+      
+      if (method === 'phone') {
+        sentReal = await sendSMS(contact, message);
+      } else if (method === 'email') {
+        sentReal = await sendEmail(contact, 'Nexus Authentication Code', message);
+      }
+      
+      if (sentReal) {
+        console.log(`[REAL 2FA] Successfully sent OTP to ${contact} via ${method}`);
+        return res.json({ message: 'Verification code sent.' });
+      } else {
+        console.log(`[SIMULATED 2FA] Sent OTP ${otp} to ${contact} via ${method} (Configure .env for real delivery)`);
+        return res.json({ message: 'Verification code simulated in terminal.' });
+      }
+    } else {
+      console.log(`[SIMULATED 2FA FALLBACK] Sent OTP ${otp} to ${contact} via ${method}`);
+      return res.json({ message: 'Verification code simulated (fallback).' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to send OTP' });
+  }
+});
+
+// 6c. Verify 2FA OTP and Enable
+app.post('/api/user/security/otp/verify', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const { code, method, contact } = req.body;
+
+    if (!code || !method || !contact) {
+      return res.status(400).json({ error: 'Missing verification data.' });
+    }
+
+    if (isMongoConnected) {
+      const user = await User.findById(decoded.id);
+      if (!user) return res.status(404).json({ error: 'User not found' });
+
+      // In fallback mode, or if OTP is already expired/mismatched
+      if (user.security.tempOTP !== code) {
+        return res.status(400).json({ error: 'Invalid verification code.' });
+      }
+      
+      if (user.security.tempOTPExpires < new Date()) {
+        return res.status(400).json({ error: 'Verification code expired.' });
+      }
+
+      // Success, enable 2FA
+      user.security.twoFactor = true;
+      user.security.twoFactorMethod = method;
+      user.security.twoFactorContact = contact;
+      user.security.tempOTP = null;
+      user.security.tempOTPExpires = null;
+      await user.save();
+
+      return res.json({ message: '2FA enabled successfully', security: user.security });
+    } else {
+      // In fallback mode, just assume success if a code is provided (mocking)
+      return res.json({ 
+        message: '2FA enabled (fallback)', 
+        security: { twoFactor: true, twoFactorMethod: method, twoFactorContact: contact }
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to verify OTP' });
+  }
+});
+
+// 7. Revoke Specific Session
+app.delete('/api/user/sessions/:sessionId', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+    
+    if (isMongoConnected) {
+      const user = await User.findById(decoded.id);
+      if (!user) return res.status(404).json({ error: 'User not found' });
+      
+      // Filter out the revoked session
+      user.activeSessions = user.activeSessions.filter(s => s._id.toString() !== req.params.sessionId);
+      await user.save();
+      return res.json({ message: 'Session revoked successfully.', activeSessions: user.activeSessions });
+    } else {
+      return res.json({ message: 'Session revoked (fallback)' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to revoke session' });
+  }
+});
+
+// 8. Revoke All Other Sessions
+app.delete('/api/user/sessions', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+    
+    if (isMongoConnected) {
+      const user = await User.findById(decoded.id);
+      if (!user) return res.status(404).json({ error: 'User not found' });
+      
+      // Keep only current session
+      user.activeSessions = user.activeSessions.filter(s => s.isCurrent === true);
+      await user.save();
+      return res.json({ message: 'All other sessions revoked.', activeSessions: user.activeSessions });
+    } else {
+      return res.json({ message: 'Sessions revoked (fallback)' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to revoke sessions' });
+  }
+});
+
+// 9. Update Notifications Preferences
 app.put('/api/user/notifications', async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
@@ -343,6 +580,67 @@ app.put('/api/user/billing', async (req, res) => {
     }
   } catch (err) {
     res.status(500).json({ error: 'Failed to update billing address' });
+  }
+});
+
+// 9. Link Account
+app.post('/api/user/linked-accounts', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const { platform, handle } = req.body;
+
+    if (!platform || !handle) {
+      return res.status(400).json({ error: 'Platform and handle are required.' });
+    }
+
+    if (isMongoConnected) {
+      const user = await User.findById(decoded.id);
+      if (!user) return res.status(404).json({ error: 'User not found' });
+
+      // Check if already linked
+      const exists = user.linkedAccounts.find(a => a.platform === platform && a.handle === handle);
+      if (exists) return res.status(400).json({ error: 'Account already linked.' });
+
+      user.linkedAccounts.push({ platform, handle });
+      await user.save();
+      return res.json({ message: 'Account linked', linkedAccounts: user.linkedAccounts });
+    } else {
+      return res.json({ message: 'Account linked (fallback)', linkedAccounts: [{ platform, handle }] });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to link account' });
+  }
+});
+
+// 10. Unlink Account
+app.delete('/api/user/linked-accounts/:platform', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const { platform } = req.params;
+    const { handle } = req.query;
+
+    if (isMongoConnected) {
+      const user = await User.findById(decoded.id);
+      if (!user) return res.status(404).json({ error: 'User not found' });
+
+      user.linkedAccounts = user.linkedAccounts.filter(
+        a => !(a.platform === platform && (!handle || a.handle === handle))
+      );
+      await user.save();
+      return res.json({ message: 'Account unlinked', linkedAccounts: user.linkedAccounts });
+    } else {
+      return res.json({ message: 'Account unlinked (fallback)', linkedAccounts: [] });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to unlink account' });
   }
 });
 

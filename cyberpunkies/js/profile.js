@@ -135,7 +135,25 @@ const CyberProfile = (() => {
         const isEnabled = e.target.checked;
 
         if (settingName === 'two-factor') {
-          userData.security.twoFactor = isEnabled;
+          if (isEnabled) {
+            // Prevent immediate toggle, open setup modal instead
+            e.target.checked = false;
+            const modal = document.getElementById('setup-2fa-modal');
+            if (modal) modal.classList.remove('hidden');
+            return;
+          } else {
+            userData.security.twoFactor = false;
+            // Instantly save to backend when turning off
+            const token = localStorage.getItem('cybermarket_auth_token');
+            if (token) {
+              fetch(`${API_BASE}/api/user/security`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ twoFactor: false })
+              }).catch(() => {});
+            }
+            CyberApp.showToast('2FA DISABLED', 'error');
+          }
         } else if (settingName && userData.notifications) {
           const keyMap = {
             'order-updates': 'orderUpdates',
@@ -298,6 +316,28 @@ const CyberProfile = (() => {
   function initPasswordForm() {
     const form = document.getElementById('password-form');
     if (!form) return;
+
+    // Password visibility toggle (eye buttons)
+    document.querySelectorAll('.password-toggle-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        if (!input) return;
+
+        const isHidden = input.type === 'password';
+        input.type = isHidden ? 'text' : 'password';
+
+        // Swap icon
+        const icon = btn.querySelector('i, svg');
+        if (icon) {
+          icon.setAttribute('data-lucide', isHidden ? 'eye-off' : 'eye');
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // Visual feedback
+        btn.style.color = isHidden ? 'var(--color-accent)' : 'var(--color-muted-foreground)';
+      });
+    });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -478,58 +518,274 @@ const CyberProfile = (() => {
       linkAccountBtn.addEventListener('click', () => linkModal.classList.remove('hidden'));
       cancelLinkBtn?.addEventListener('click', () => linkModal.classList.add('hidden'));
 
-      linkForm?.addEventListener('submit', (e) => {
+      linkForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const platform = document.getElementById('link-platform').value;
         const handle = document.getElementById('link-handle').value.trim();
+        if (!handle) return;
 
-        // Insert new linked account badge
-        const badgeContainer = document.getElementById('linked-accounts-container');
-        if (badgeContainer) {
-          const badgeHtml = document.createElement('div');
-          badgeHtml.className = 'linked-account-badge flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] bg-[var(--color-muted)]';
-          badgeHtml.setAttribute('data-account', platform);
-          badgeHtml.style.clipPath = 'polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px))';
-          badgeHtml.innerHTML = `
-            <i data-lucide="shield" style="width:16px;height:16px;stroke-width:1.5;color:var(--color-accent-tertiary);"></i>
-            <span style="font-family: var(--font-label); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;">${handle} (${platform})</span>
-            <span class="cyber-badge cyber-badge--tertiary" style="margin-left:0.5rem;">Connected</span>
-            <button class="disconnect-account-btn" title="Disconnect account" style="margin-left:0.5rem; background:none; border:none; color:var(--color-destructive); cursor:pointer; font-size:1rem; line-height:1; padding:2px 4px; opacity:0.7; transition:opacity 150ms;">&times;</button>
-          `;
-          badgeContainer.insertBefore(badgeHtml, linkAccountBtn);
+        const token = localStorage.getItem('cybermarket_auth_token');
+        try {
+          const resp = await fetch(`${API_BASE}/api/user/linked-accounts`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ platform, handle })
+          });
+          const data = await resp.json();
+          if (!resp.ok) {
+            CyberApp.showToast(data.error || 'FAILED TO LINK ACCOUNT', 'error');
+            return;
+          }
+
+          // Re-render badges from server response
+          if (data.linkedAccounts) {
+            renderLinkedAccounts(data.linkedAccounts);
+          } else {
+            // Fallback: just insert the badge
+            insertAccountBadge(platform, handle);
+          }
+          linkModal.classList.add('hidden');
+          linkForm.reset();
+          CyberApp.showToast('DATANET ACCOUNT LINKED SUCCESSFULLY', 'success');
+        } catch (err) {
+          // Offline fallback: just add badge locally
+          insertAccountBadge(platform, handle);
+          linkModal.classList.add('hidden');
+          linkForm.reset();
+          CyberApp.showToast('ACCOUNT LINKED (LOCAL)', 'info');
         }
-
-        linkModal.classList.add('hidden');
-        linkForm.reset();
-        CyberApp.showToast('NEW DATANET ACCOUNT LINKED', 'success');
-        if (typeof lucide !== 'undefined') lucide.createIcons();
       });
     }
 
-    // Backdrop click to close modals
-    [paymentModal, linkModal].forEach(modal => {
+    // Disconnect linked accounts (event delegation)
+    const accountsContainer = document.getElementById('linked-accounts-container');
+    if (accountsContainer) {
+      accountsContainer.addEventListener('click', async (e) => {
+        const btn = e.target.closest('.disconnect-account-btn');
+        if (!btn) return;
+        const badge = btn.closest('.linked-account-badge');
+        if (!badge) return;
+
+        const platform = badge.getAttribute('data-account') || '';
+        const handle = badge.getAttribute('data-handle') || '';
+
+        // Animate removal
+        badge.style.transition = 'opacity 300ms, transform 300ms';
+        badge.style.opacity = '0';
+        badge.style.transform = 'scale(0.8)';
+
+        // Call DELETE API
+        const token = localStorage.getItem('cybermarket_auth_token');
+        try {
+          await fetch(`${API_BASE}/api/user/linked-accounts/${encodeURIComponent(platform)}?handle=${encodeURIComponent(handle)}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+        } catch (err) {
+          // Offline — still remove visually
+        }
+
+        setTimeout(() => badge.remove(), 300);
+        CyberApp.showToast(`${platform.toUpperCase()} ACCOUNT DISCONNECTED`, 'error');
+      });
+    }
+
+    // 2FA Setup Modal
+    const setup2FAModal = document.getElementById('setup-2fa-modal');
+    const cancel2FABtn = document.getElementById('cancel-2fa-btn');
+    const setup2FAForm = document.getElementById('setup-2fa-form');
+    const methodSelect = document.getElementById('2fa-method');
+    const contactLabel = document.getElementById('2fa-contact-label');
+    const contactInput = document.getElementById('2fa-contact');
+
+    if (setup2FAModal && setup2FAForm) {
+      const step1 = document.getElementById('setup-2fa-step1');
+      const step2 = document.getElementById('setup-2fa-step2');
+      const verifyMethodText = document.getElementById('verify-method-text');
+      const verify2FAForm = document.getElementById('verify-2fa-form');
+      const back2FABtn = document.getElementById('back-2fa-btn');
+
+      // Helper to reset modal to step 1
+      const resetModal = () => {
+        setup2FAModal.classList.add('hidden');
+        setup2FAForm.reset();
+        if (verify2FAForm) verify2FAForm.reset();
+        if (step1) step1.classList.remove('hidden');
+        if (step2) step2.classList.add('hidden');
+      };
+
+      cancel2FABtn?.addEventListener('click', resetModal);
+
+      methodSelect?.addEventListener('change', (e) => {
+        if (e.target.value === 'email') {
+          contactLabel.textContent = 'Email Address';
+          contactInput.placeholder = 'runner@darknet.io';
+          contactInput.type = 'email';
+        } else {
+          contactLabel.textContent = 'Phone Number';
+          contactInput.placeholder = '+1 555-0198';
+          contactInput.type = 'text';
+        }
+      });
+
+      // Step 1: Send OTP
+      setup2FAForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const method = methodSelect.value;
+        const contact = contactInput.value.trim();
+
+        if (!contact) return;
+
+        const token = localStorage.getItem('cybermarket_auth_token');
+        try {
+          // Send request for OTP
+          const resp = await fetch(`${API_BASE}/api/user/security/otp/send`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ method, contact })
+          });
+          const data = await resp.json();
+          if (!resp.ok) {
+            CyberApp.showToast(data.error || 'FAILED TO SEND OTP', 'error');
+            return;
+          }
+
+          CyberApp.showToast(data.message || 'OTP SENT', 'info');
+
+          // Switch to Step 2
+          if (verifyMethodText) verifyMethodText.textContent = method === 'email' ? 'email' : 'phone';
+          if (step1) step1.classList.add('hidden');
+          if (step2) step2.classList.remove('hidden');
+        } catch (err) {
+          CyberApp.showToast('Server error sending OTP', 'error');
+        }
+      });
+
+      // Step 2: Back button
+      back2FABtn?.addEventListener('click', () => {
+        if (step2) step2.classList.add('hidden');
+        if (step1) step1.classList.remove('hidden');
+        if (verify2FAForm) verify2FAForm.reset();
+      });
+
+      // Step 2: Verify OTP
+      if (verify2FAForm) {
+        verify2FAForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const code = document.getElementById('2fa-code').value.trim();
+          const method = methodSelect.value;
+          const contact = contactInput.value.trim();
+          
+          if (!code || code.length !== 6) {
+            CyberApp.showToast('ENTER 6-DIGIT CODE', 'error');
+            return;
+          }
+
+          const token = localStorage.getItem('cybermarket_auth_token');
+          try {
+            const resp = await fetch(`${API_BASE}/api/user/security/otp/verify`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+              body: JSON.stringify({ code, method, contact })
+            });
+            const data = await resp.json();
+            
+            if (!resp.ok) {
+              CyberApp.showToast(data.error || 'INVALID OTP CODE', 'error');
+              return;
+            }
+
+            userData.security = data.security;
+            saveLocalCache();
+
+            // Visually turn toggle on
+            const toggle = document.querySelector('input[data-setting="two-factor"]');
+            if (toggle) {
+              toggle.checked = true;
+              const label = toggle.closest('.toggle-row')?.querySelector('.toggle-label');
+              if (label) {
+                const statusEl = label.querySelector('.toggle-status');
+                if (statusEl) {
+                  statusEl.textContent = 'ENABLED';
+                  statusEl.style.color = 'var(--color-accent)';
+                }
+              }
+            }
+
+            resetModal();
+            CyberApp.showToast('2FA ENABLED SUCCESSFULLY', 'success');
+          } catch (err) {
+            CyberApp.showToast('Server error verifying OTP', 'error');
+          }
+        });
+      }
+    }
+
+    // Backdrop click to close modals (updated to include 2FA)
+    [paymentModal, linkModal, setup2FAModal].forEach(modal => {
       if (modal) {
         modal.addEventListener('click', (e) => {
           if (e.target === modal) modal.classList.add('hidden');
         });
       }
     });
+  }
 
-    // Disconnect linked accounts (event delegation)
-    const accountsContainer = document.getElementById('linked-accounts-container');
-    if (accountsContainer) {
-      accountsContainer.addEventListener('click', (e) => {
-        const btn = e.target.closest('.disconnect-account-btn');
-        if (!btn) return;
-        const badge = btn.closest('.linked-account-badge');
-        if (!badge) return;
+  /**
+   * Map platform name to a Lucide icon name.
+   */
+  function platformIcon(platform) {
+    const icons = {
+      discord: 'message-circle',
+      github: 'github',
+      matrix: 'globe',
+      telegram: 'send',
+      twitter: 'twitter'
+    };
+    return icons[platform] || 'shield';
+  }
 
-        const accountName = badge.getAttribute('data-account') || 'account';
-        badge.style.transition = 'opacity 300ms, transform 300ms';
-        badge.style.opacity = '0';
-        badge.style.transform = 'scale(0.8)';
-        setTimeout(() => badge.remove(), 300);
-        CyberApp.showToast(`${accountName.toUpperCase()} ACCOUNT DISCONNECTED`, 'error');
+  /**
+   * Insert a single linked account badge into the container.
+   */
+  function insertAccountBadge(platform, handle) {
+    const container = document.getElementById('linked-accounts-container');
+    const linkBtn = document.getElementById('link-account-btn');
+    if (!container) return;
+
+    const badge = document.createElement('div');
+    badge.className = 'linked-account-badge flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] bg-[var(--color-muted)]';
+    badge.setAttribute('data-account', platform);
+    badge.setAttribute('data-handle', handle);
+    badge.style.clipPath = 'polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px))';
+    badge.innerHTML = `
+      <i data-lucide="${platformIcon(platform)}" style="width:16px;height:16px;stroke-width:1.5;color:var(--color-accent-tertiary);"></i>
+      <span style="font-family: var(--font-label); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;">${handle}</span>
+      <span class="cyber-badge cyber-badge--tertiary" style="margin-left:0.5rem;">Connected</span>
+      <button class="disconnect-account-btn" title="Disconnect account" style="margin-left:0.5rem; background:none; border:none; color:var(--color-destructive); cursor:pointer; font-size:1rem; line-height:1; padding:2px 4px; opacity:0.7; transition:opacity 150ms;">&times;</button>
+    `;
+    container.insertBefore(badge, linkBtn);
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
+
+  /**
+   * Render all linked accounts from MongoDB data.
+   */
+  function renderLinkedAccounts(accounts) {
+    const container = document.getElementById('linked-accounts-container');
+    if (!container) return;
+    const linkBtn = document.getElementById('link-account-btn');
+
+    // Remove existing badges (keep the + Link Account button)
+    container.querySelectorAll('.linked-account-badge').forEach(b => b.remove());
+
+    // Insert each account
+    if (accounts && accounts.length > 0) {
+      accounts.forEach(acc => {
+        insertAccountBadge(acc.platform, acc.handle);
       });
     }
   }
@@ -608,6 +864,86 @@ const CyberProfile = (() => {
           </tr>
         `;
       }).join('');
+    }
+
+    // Linked Accounts from MongoDB
+    if (userData.linkedAccounts) {
+      renderLinkedAccounts(userData.linkedAccounts);
+    }
+  }
+
+  /**
+   * Initialize Password Form and visibility toggles
+   */
+  function initPasswordForm() {
+    const passwordForm = document.getElementById('password-form');
+    
+    // Setup visibility toggles
+    document.querySelectorAll('.password-toggle-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        const icon = btn.querySelector('i');
+        
+        if (input && icon) {
+          if (input.type === 'password') {
+            input.type = 'text';
+            icon.setAttribute('data-lucide', 'eye-off');
+            btn.style.color = 'var(--color-accent)';
+          } else {
+            input.type = 'password';
+            icon.setAttribute('data-lucide', 'eye');
+            btn.style.color = 'var(--color-muted-foreground)';
+          }
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+      });
+    });
+
+    if (passwordForm) {
+      passwordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const currentPassword = document.getElementById('current-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        
+        if (newPassword !== confirmPassword) {
+          CyberApp.showToast('PASSWORDS DO NOT MATCH', 'error');
+          return;
+        }
+
+        const btn = passwordForm.querySelector('button[type="submit"]');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i data-lucide="loader" class="animate-spin" style="width:14px;height:14px;"></i> PROCESSING...';
+        btn.disabled = true;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        try {
+          const token = localStorage.getItem('cybermarket_auth_token');
+          const resp = await fetch(`${API_BASE}/api/user/password`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ currentPassword, newPassword })
+          });
+          const data = await resp.json();
+          
+          if (!resp.ok) {
+            CyberApp.showToast(data.error || 'UPDATE FAILED', 'error');
+          } else {
+            CyberApp.showToast('PASSWORD UPDATED SUCCESSFULLY', 'success');
+            passwordForm.reset();
+          }
+        } catch (err) {
+          CyberApp.showToast('SERVER CONNECTION LOST', 'error');
+        } finally {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+      });
     }
   }
 
