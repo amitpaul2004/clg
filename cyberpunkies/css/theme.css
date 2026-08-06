@@ -72,8 +72,6 @@ body {
   font-family: var(--font-body);
   background-color: var(--color-background) !important;
   color: var(--color-foreground) !important;
-  font-size: 1.05rem;
-  font-weight: 500;
   line-height: 1.6;
   letter-spacing: 0.025em;
   min-height: 100vh;
